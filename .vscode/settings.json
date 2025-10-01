@@ -1,0 +1,8 @@
+{
+    "makefile.configureOnOpen": false,
+    "files.associations": {
+        "windows.h": "c",
+        "utils.h": "c",
+        "supemon.h": "c"
+    }
+}

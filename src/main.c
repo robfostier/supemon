@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include "main.h"
+#include "utils.h"  
+#include "player.h"
+#include "supemon.h"
+#include "moves.h"
+
+int main(void)
+{
+    Player player = start_game();
+
+    chose_action(&player);
+
+    return 0;
+}
+
+Player start_game(void)
+{
+    char name[16];
+
+    npc_dialog("\"...", 500);
+    npc_dialog(" Hello", 30);
+    npc_dialog("...", 500);
+    npc_dialog(" Erm", 30);
+    npc_dialog("...", 500);
+    npc_dialog(" What's your name again ?\" asks an old man.\n", 30);
+
+    npc_dialog("\nYOUR NAME: ", 10);
+    scanf("%15s", name);
+    printf("\n");
+
+    npc_dialog("\"Oh yes, I remember now. You are ", 30);
+    npc_dialog(name, 30);
+    npc_dialog("...", 500);
+    npc_dialog("\nAnd, erm, what's my name again ?", 30);
+    npc_dialog("..", 500);
+    npc_dialog("\nAh yes ! I'm professor Ionis", 20);
+    npc_dialog("...", 500);
+    npc_dialog(" Here, I have a gift for you.\nTake one of my Supeballs ! Each contains a Supemon. Choose well !\" says the very old man.\n", 20);
+
+    npc_dialog("\nYou are presented with a strange box.\nIt appears to contain 3 strange balls.\n\n", 10);
+
+    printf("+-------------------------------+\n");
+    printf("| Choose your starter Supemon : |\n");
+    printf("|   1. Supmander                |\n");
+    printf("|   2. Supasaur                 |\n");
+    printf("|   3. Supirtle                 |\n");
+    printf("+-------------------------------+\n");
+
+    int choice = 0;
+    while (choice < 1 || choice > 3)
+    {
+        printf("\nYOUR CHOICE (1, 2 or 3): ");
+        scanf("%d", &choice);
+    }
+
+    Player player;
+    Supemon starter;
+
+    switch (choice)
+    {
+        case 1:
+        {
+            starter = init_supemon(&SUPMANDER, 1);
+            break;
+        }
+        case 2:
+        {
+            starter = init_supemon(&SUPASAUR, 1);
+            break;
+        }
+        case 3:
+        {
+            starter = init_supemon(&SUPIRTLE, 1);
+            break;
+        }
+    }
+
+    init_player(&player, name, starter);
+
+    npc_dialog("\n\"You chose ", 20);
+    npc_dialog(starter.name, 20);
+    npc_dialog(" ! A wise choice. Right on time for my hourly nap. See you soon, ", 20);
+    npc_dialog(player.name, 20);
+    npc_dialog(" !\" says professor Ionis as he urges you to leave his home.\n\n", 20);
+
+    npc_dialog("You step outside the house, ready to start your adventure!\n\n", 20);
+
+    return player;
+}
+
+void chose_action(Player* player)
+{
+    printf("+-------------------------------+\n");
+    printf("| Where do you want to go now ? |\n");
+    printf("|   1. Into the wild            |\n");
+    printf("|   2. Shop                     |\n");
+    printf("|   3. Supemon Center           |\n");
+    printf("|   4. Leave the Game           |\n");
+    printf("+-------------------------------+\n");
+
+    int choice = 0;
+    while (choice < 1 || choice > 4)
+    {
+        printf("\nYOUR CHOICE (1, 2, 3 or 4): ");
+        scanf("%d", &choice);
+    }
+
+    printf("\n");
+
+    switch (choice)
+    {
+        case 3:
+            go_to_center(player);
+            break;
+    }
+}
+
+void go_to_center(Player* player)
+{
+    npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n", 20);
+
+    printf("+-------------------------------+\n");
+    printf("| What do you wish to do ?      |\n");
+    printf("|   1. Heal all Supemons        |\n");
+    printf("|   2. Change active Supemon    |\n");
+    printf("|   4. Leave the Center         |\n");
+    printf("+-------------------------------+\n");
+}
