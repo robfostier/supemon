@@ -3,10 +3,12 @@ ifeq ($(OS),Windows_NT)
     EXT=.exe
     RM=del /Q
     MKDIR=mkdir
+	SEP=\\
 else
     EXT=
     RM=rm -f
     MKDIR=mkdir -p
+	SEP=/
 endif
 
 # Variables
@@ -38,7 +40,7 @@ $(EXECDIR):
 	$(MKDIR) $(EXECDIR)
 
 clean:
-	-$(RM) $(OBJDIR)/* $(EXECDIR)/*
+	-$(RM) $(OBJDIR)$(SEP)* $(EXECDIR)$(SEP)*
 
 run: all
 	$(EXEC)
