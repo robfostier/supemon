@@ -1,9 +1,19 @@
 #pragma once
 
+#include "global.h"
+
+typedef enum {
+    MOVE_OFFENSIVE,
+    MOVE_ATTACK,
+    MOVE_DEFENSE,
+    MOVE_EVASION,
+    MOVE_ACCURACY
+} MoveType;
+
 typedef struct {
-    char name[10];
+    char name[MAX_NAME_LENGTH];
     int damage; // positive for damage/buffs, negative for healing/debuffs
-    char type; // 'O' for offensive moves (damage/healing), 'A' for attack, 'D' for defense, 'E' for evasion, 'P' for accuracy, 'S' for speed
+    MoveType type;
 } Move;
 
 extern Move SCRATCH;

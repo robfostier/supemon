@@ -1,9 +1,10 @@
 #pragma once
 
+#include "global.h"
 #include "moves.h"
 
 typedef struct {
-    char name[16];
+    char name[MAX_NAME_LENGTH];
     unsigned int level;
     unsigned int experience;
     unsigned int health;
@@ -17,7 +18,7 @@ typedef struct {
     unsigned int accuracy;
     unsigned int base_accuracy;
     unsigned int speed;
-    Move* moves[4];
+    Move* moves[MAX_MOVES];
 } Supemon;
 
 extern Supemon SUPMANDER;

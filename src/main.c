@@ -1,5 +1,7 @@
 #include <stdio.h>
+
 #include "main.h"
+#include "global.h"
 #include "utils.h"  
 #include "player.h"
 #include "supemon.h"
@@ -16,7 +18,7 @@ int main(void)
 
 Player start_game(void)
 {
-    char name[16];
+    char name[MAX_NAME_LENGTH];
 
     npc_dialog("\"...", 500);
     npc_dialog(" Hello", 30);
@@ -26,7 +28,7 @@ Player start_game(void)
     npc_dialog(" What's your name again ?\" asks an old man.\n", 30);
 
     npc_dialog("\nYOUR NAME: ", 10);
-    scanf("%15s", name);
+    scanf("%11s", name);
     printf("\n");
 
     npc_dialog("\"Oh yes, I remember now. You are ", 30);

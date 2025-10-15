@@ -1,14 +1,15 @@
 #pragma once
 
+#include "global.h"
 #include "supemon.h"
 #include "items.h"
 
 typedef struct {
-    char name[16];
-    Supemon supemons[6];
+    char name[MAX_NAME_LENGTH];
+    Supemon supemons[MAX_SUPEMONS];
     int active_index;
     unsigned int coins;
-    Item* items[10];
+    Item* items[MAX_ITEMS];
 } Player;
 
 void init_player(Player* player, const char* name, Supemon starter);

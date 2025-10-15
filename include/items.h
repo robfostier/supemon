@@ -1,5 +1,5 @@
 #pragma once
 
 typedef struct {
-    char name[16];
+    char name[MAX_NAME_LENGTH];
 } Item;

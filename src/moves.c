@@ -1,8 +1,8 @@
 #include "moves.h"
 
-Move SCRATCH = {"Scratch", 3, 'O'};
-Move POUND = {"Pound", 2, 'O'};
+Move SCRATCH = {"Scratch", 3, MOVE_OFFENSIVE};
+Move POUND = {"Pound", 2, MOVE_OFFENSIVE};
 
-Move GRAWL = {"Growl", 1, 'A'};
-Move FOLIAGE = {"Foliage", 1, 'E'};
-Move SHELL = {"Shell", 1, 'D'};
+Move GRAWL = {"Growl", 1, MOVE_ATTACK};
+Move FOLIAGE = {"Foliage", 1, MOVE_EVASION};
+Move SHELL = {"Shell", 1, MOVE_DEFENSE};
