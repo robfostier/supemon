@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "main.h"
 #include "global.h"
@@ -10,6 +12,9 @@
 
 int main(void)
 {
+    // SET SEED
+    srand(time(NULL));
+
     Player player = start_game();
 
     chose_action(&player);

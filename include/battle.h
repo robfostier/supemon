@@ -18,3 +18,8 @@ int player_turn(Player* player, Supemon* foe, int item_count);
 int foe_turn(Player* player, Supemon* foe);
 
 void apply_move(Move* move, Supemon* attacker, Supemon* target);
+
+/**
+ * Reset all statistics
+ */
+void leave_battle(Player* player);

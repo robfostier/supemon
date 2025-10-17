@@ -7,17 +7,17 @@ typedef struct {
     char name[MAX_NAME_LENGTH];
     unsigned int level;
     unsigned int experience;
-    unsigned int health;
-    unsigned int max_health;
-    unsigned int attack;
-    unsigned int base_attack;
-    unsigned int defense;
-    unsigned int base_defense;
-    unsigned int evasion;
-    unsigned int base_evasion;
-    unsigned int accuracy;
-    unsigned int base_accuracy;
-    unsigned int speed;
+    int health;
+    int max_health;
+    int attack;
+    int base_attack;
+    int defense;
+    int base_defense;
+    int evasion;
+    int base_evasion;
+    int accuracy;
+    int base_accuracy;
+    int speed;
     Move* moves[MAX_MOVES];
 } Supemon;
 
@@ -32,10 +32,10 @@ extern Supemon SUPIRTLE;
 Supemon init_supemon(Supemon* template, unsigned int level);
 
 void level_up(Supemon* supemon);
-void increase_stat(unsigned int* stat, double mult);
+void increase_stat(int* stat, float mult);
 void gain_experience(Supemon* supemon, unsigned int xp);
 unsigned int xp_to_next_level(unsigned int current_level);
-void update_health(Supemon* supemon, int value); // TO DO
+void update_health(Supemon* supemon, int value);
 
 /**
  * Return a random Supemon* template.

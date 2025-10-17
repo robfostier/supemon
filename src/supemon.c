@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
 
 #include "supemon.h"
 #include "moves.h"
@@ -91,15 +90,15 @@ void level_up(Supemon* supemon){
     increase_stat(&supemon->speed, 1.3);
 }
 
-void increase_stat(unsigned int* stat, double mult)
+void increase_stat(int* stat, float mult)
 {
-    if (*stat * mult == floor(*stat * mult)) *stat = (unsigned int)(*stat * mult);
+    float tmp = (*stat) * mult;
+    if (fabsf(tmp - floorf(tmp)) < 1e-6f) *stat = (int)tmp;
     else
     {
-        *stat = (unsigned int)(*stat * mult);
+        *stat = (int)tmp;
 
         // 50% chance to round up, since half of random numbers are odd
-        srand(time(NULL));
         if (rand() % 2 == 1) (*stat)++; // *stat in parenthesis to increase the value, not the pointer itself
     }
 }
@@ -125,9 +124,15 @@ unsigned int xp_to_next_level(unsigned int current_level)
     else return xp_to_next_level(current_level - 1) + 1000;
 }
 
+void update_health(Supemon* supemon, int value)
+{
+    supemon->health += value;
+    if (supemon->health < 0) supemon->health = 0;
+    else if (supemon->health > supemon->max_health) supemon->health = supemon->max_health; 
+}
+
 Supemon* get_random_supemon_template()
 {
-    srand(time(NULL));
     int rnd = rand() % 3;
     
     switch(rnd)

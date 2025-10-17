@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "global.h"
 #include "player.h"
@@ -9,10 +9,11 @@
 
 int go_to_battle(Player* player)
 {
+    Supemon* active = get_active_supemon(player);
     Supemon foe;
 
     Supemon* random_mon = get_random_supemon_template();
-    if (random_mon != NULL) foe = init_supemon(random_mon, get_active_supemon(player)->level);
+    if (random_mon != NULL) foe = init_supemon(random_mon, active->level);
     else return 0; // Error on random init
     
     int item_count = 0;
@@ -23,6 +24,7 @@ int go_to_battle(Player* player)
         if (turn_result == 1)
         {
             battle_rewards(player, &foe);
+            leave_battle(player);
             return 1;
         }
         else if (turn_result == 2) // If an item was used, player gets another turn
@@ -30,23 +32,42 @@ int go_to_battle(Player* player)
             if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
             {
                 battle_rewards(player, &foe);
+                leave_battle(player);
                 return 1;
             }
         }
 
-        if (foe_turn(player, &foe) == 1) return 1; // 0 if battle still ongoing, 1 if turn ends battle
+        if (foe_turn(player, &foe) == 1)
+        {
+            leave_battle(player);
+            return 1; // 0 if battle still ongoing, 1 if turn ends battle
+        }
     }
 }
 
 void display_battle(Player* player, Supemon* foe)
 {
+    Supemon* active = get_active_supemon(player);
+    
+    printf("---------------------------------\n");
+    printf("%s (enemy)\n", foe->name);
+    printf("---------------------------------\n");
+    printf(" HP:%d/%d          Lvl:%d        \n", foe->health, foe->max_health, foe->level);
+    printf(" Atk:%d             Def:%d        \n", foe->attack + foe->base_attack, foe->defense + foe->base_defense);
+    printf(" Acc:%d             Eva:%d        \n", foe->accuracy + foe->base_accuracy, foe->evasion + foe->base_evasion);
+    printf("---------------------------------\n");
+    printf("%s (%s)\n", active->name, player->name);
+    printf("---------------------------------\n");
+    printf(" HP:%d/%d          Lvl:%d        \n", active->health, active->max_health, active->level);
+    printf(" Atk:%d             Def:%d        \n", active->attack + active->base_attack, active->defense + active->base_defense);
+    printf(" Acc:%d             Eva:%d        \n", active->accuracy + active->base_accuracy, active->evasion + active->base_evasion);
+    printf("---------------------------------\n");
     return;
     // TO DO
 }
 
 void battle_rewards(Player* player, Supemon* foe)
 {
-    srand(time(NULL));
     int gained_coins = rand() % 401 + 100; // rand % 401 -> (0, ..., 400), + 100 = (100, ..., 500)
     int gained_xp = (rand() % 401 + 100) * foe->level; // (100, ..., 500) * enemy level
 
@@ -56,7 +77,8 @@ void battle_rewards(Player* player, Supemon* foe)
 
 int player_turn(Player* player, Supemon* foe, int item_count)
 {
-    printf("Your turn...\n");
+    // SET SEED
+    printf("Your turn...\n\n");
     
     display_battle(player, foe);
 
@@ -78,6 +100,8 @@ int player_turn(Player* player, Supemon* foe, int item_count)
 
     printf("\n");
 
+    Supemon* active = get_active_supemon(player);
+
     switch (choice)
     {
         case 1:
@@ -86,7 +110,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
             int move_count;
             for (move_count = 0; move_count < MAX_MOVES; move_count++)
             {
-                Move* move = get_active_supemon(player)->moves[move_count];
+                Move* move = active->moves[move_count];
                 if (move == NULL) break;
                 printf("%d - %s\n", move_count + 1, move->name);
             }
@@ -105,7 +129,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
             if (chosen_move == move_count + 1) break; // Player cancelled move, needs to abort turn
 
             // Apply the move
-            apply_move(get_active_supemon(player)->moves[chosen_move], get_active_supemon(player), foe);
+            apply_move(active->moves[chosen_move - 1], active, foe);
 
             if (foe->health > 0) return 0; // Battle can continue
             return 1; // Battle needs to stop if foe fainted
@@ -161,33 +185,34 @@ int player_turn(Player* player, Supemon* foe, int item_count)
         }
         case 4:
         {
-            srand(time(NULL));
             float rnd = (float)rand() / RAND_MAX;
+            float health_ratio = (float)(foe->max_health - foe->health) / foe->max_health;
+            float rate = health_ratio - 0.5f;
 
-            if (rnd <= (foe->max_health - foe->health) / foe->max_health - .5f)
+            if (rnd <= rate)
             {
                 add_supemon(player, *foe);
-                printf("Successfully captured %s !\n", foe->name);
+                printf("Successfully captured %s !\n\n", foe->name);
                 return 1; // Foe captured, battle needs to end
             }
             else{
-                printf("Capture failed...");
+                printf("Capture failed... (%.2f/%.2f)\n\n", rate, rnd);
                 return 0; // Battle can continue
             }
         }
         case 5:
         {
-            srand(time(NULL));
             float rnd = (float)rand() / RAND_MAX;
+            float rate = (float)active->speed / (active->speed + foe->speed); // Don't forget to cast ints to floats
 
-            if (rnd <= get_active_supemon(player)->speed / (get_active_supemon(player)->speed + foe->speed))
+            if (rnd <= rate)
             {
-                printf("You ran away !\n");
+                printf("You ran away !\n\n");
                 return 1; // Ran away, battle needs to end
             }
             else
             {
-                printf("You failed to run away from the battle...");
+                printf("You failed to run away from the battle... (%.2f/%.2f)\n\n", rate, rnd);
                 return 0; // Battle can continue
             }
         }
@@ -199,6 +224,8 @@ int player_turn(Player* player, Supemon* foe, int item_count)
 
 int foe_turn(Player* player, Supemon* foe)
 {
+    Supemon* active = get_active_supemon(player);
+
     // Get foe move count
     int move_count;
     for (move_count = 0; move_count < MAX_MOVES; move_count++)
@@ -209,18 +236,86 @@ int foe_turn(Player* player, Supemon* foe)
     if (move_count == 0) return 1; // Foe doesn't have any move, leave battle
 
     // Pick a random move
-    srand(time(NULL));
     int rnd = rand() % move_count;
     Move* chosen_move = foe->moves[rnd];
 
-    apply_move(chosen_move, foe, get_active_supemon(player));
+    apply_move(chosen_move, foe, active);
 
-    if (get_active_supemon(player)->health > 0) return 0; // Battle can continue
+    if (active->health > 0) return 0; // Battle can continue
     return 1; // Battle needs to stop if player's active supemon has fainted
 }
 
 void apply_move(Move* move, Supemon* attacker, Supemon* target)
 {
-    // TO DO
-    return;
+    switch(move->type)
+    {
+        case MOVE_OFFENSIVE:
+        {
+            if (move->damage > 0)
+            {
+                float a_atk = (float)attacker->attack + attacker->base_attack;
+                float a_acc = (float)attacker->accuracy + attacker->base_accuracy;
+                
+                float t_def = (float)target->defense + target->base_defense;
+                float t_eva = (float)target->evasion + target->base_evasion;
+
+                if (t_def <= .0f) t_def = 1.0f; // Avoid div by 0 if target's def was reduced
+
+                float dmg = (a_atk * move->damage) / t_def;
+                
+                // 1/2 chance to round up if not an integer
+                if (floorf(dmg) != dmg)
+                {
+                    dmg = floorf(dmg);
+                    if ((float)rand() / RAND_MAX >= .5f) dmg += 1.0f;
+                }
+
+                float dodge_rate = a_acc / (a_acc + t_eva) + .1f;
+
+                //printf("%f atk, %f def, %f acc, %f eva, %f dmg", a_atk, t_def, a_acc, t_eva, dmg);
+
+                if ((float)rand() / RAND_MAX > dodge_rate) update_health(target, -(int)dmg);
+                else printf("%s dodged %s's attack !\n", target->name, attacker->name);
+            }
+            break;
+        }
+        case MOVE_ATTACK:
+        {
+            if (move->damage > 0) attacker->attack += move->damage;
+            else target->attack += move->damage;
+            break;
+        }
+        case MOVE_DEFENSE:
+        {
+            if (move->damage > 0) attacker->defense += move->damage;
+            else target->defense += move->damage;
+            break;
+        }
+        case MOVE_ACCURACY:
+        {
+            if (move->damage > 0) attacker->accuracy += move->damage;
+            else target->accuracy += move->damage;
+            break;
+        }
+        case MOVE_EVASION:
+        {
+            if (move->damage > 0) attacker->evasion += move->damage;
+            else target->evasion += move->damage;
+            break;
+        }
+        default: break;
+    }
+}
+
+void leave_battle(Player* player)
+{
+    for (int i = 0; i < MAX_SUPEMONS; i++)
+    {
+        if (player->supemons[i].level == 0) break;
+
+        player->supemons[i].attack = 0;
+        player->supemons[i].defense = 0;
+        player->supemons[i].evasion = 0;
+        player->supemons[i].accuracy = 0;
+    }
 }
