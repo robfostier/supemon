@@ -10,7 +10,7 @@
 void go_to_battle(Player* player)
 {
     Supemon foe;
-    
+
     Supemon* random_mon = get_random_supemon_template();
     if (random_mon != NULL) foe = init_supemon(random_mon, get_active_supemon(player)->level);
     else return 0; // Error on random init
@@ -126,7 +126,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
         case 3:
             if (item_count < 4) // Can only use item if hasn't already used 4 during battle
             {
-                int item_count = display_supemons(player);
+                int item_count = display_items(player);
                 print(item_count + 1, " - Cancel\n");
 
                 int chosen_item = 0;
