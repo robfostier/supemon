@@ -103,7 +103,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
             apply_move(get_active_supemon(player)->moves[chosen_move], get_active_supemon(player), foe);
 
             if (foe->health > 0) return 0; // Battle can continue
-            else return 1; // Battle needs to stop if foe fainted
+            return 1; // Battle needs to stop if foe fainted
 
         case 2:
             int supemon_count = display_supemons(player);
@@ -188,6 +188,26 @@ int player_turn(Player* player, Supemon* foe, int item_count)
     return player_turn(player, foe, item_count); // If we reach here, turn was aborted, start another one
 }
 
-int foe_turn(Player* player, Supemon* foe);
+int foe_turn(Player* player, Supemon* foe)
+{
+    // Get foe move count
+    int move_count;
+    for (move_count = 0; move_count < MAX_MOVES; move_count++)
+    {
+        Move* move = foe->moves[move_count];
+        if (move == NULL) break;
+    }
+    if (move_count == 0) return 1; // Foe doesn't have any move, leave battle
+
+    // Pick a random move
+    srand(time(NULL));
+    int rnd = rand() % move_count;
+    Move* chosen_move = foe->moves[rnd];
+
+    apply_move(chosen_move, foe, get_active_supemon(player));
+
+    if (get_active_supemon(player)->health > 0) return 0; // Battle can continue
+    return 1; // Battle needs to stop if player's active supemon has fainted
+}
 
 void apply_move(Move* move, Supemon* attacker, Supemon* target);
