@@ -112,9 +112,18 @@ void chose_action(Player* player)
 
     switch (choice)
     {
+        case 1:
+            go_to_battle(player);
+            break;
+        case 2:
+            go_to_shop(player);
+            break;
         case 3:
             go_to_center(player);
             break;
+        case 4:
+            // TO DO
+            break; 
     }
 }
 

@@ -16,3 +16,6 @@ void init_player(Player* player, const char* name, Supemon starter);
 Supemon* get_active_supemon(Player* player);
 void set_active_supemon(Player* player, int index);
 int add_supemon(Player* player, Supemon new_supemon);
+
+int display_supemons(Player* player);
+int display_items(Player* player);

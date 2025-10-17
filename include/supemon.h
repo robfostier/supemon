@@ -25,8 +25,20 @@ extern Supemon SUPMANDER;
 extern Supemon SUPASAUR;
 extern Supemon SUPIRTLE;
 
+/**
+ * Initalize a Supemon.
+ * Makes a copy from a template and assigns it a level.
+ */
 Supemon init_supemon(Supemon* template, unsigned int level);
+
 void level_up(Supemon* supemon);
 void increase_stat(unsigned int* stat, double mult);
 void gain_experience(Supemon* supemon, unsigned int xp);
 unsigned int xp_to_next_level(unsigned int current_level);
+void update_health(Supemon* supemon, int value); // TO DO
+
+/**
+ * Return a random Supemon* template.
+ * Returns NULL on failure.
+ */
+Supemon* get_random_supemon_template();

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+
 #include "supemon.h"
 #include "moves.h"
 
@@ -122,4 +123,18 @@ unsigned int xp_to_next_level(unsigned int current_level)
     if (current_level < 1) return 0; // Invalid level
     else if (current_level == 1) return 500;
     else return xp_to_next_level(current_level - 1) + 1000;
+}
+
+Supemon* get_random_supemon_template()
+{
+    srand(time(NULL));
+    int rnd = rand() % 3;
+    
+    switch(rnd)
+    {
+        case 0: return &SUPMANDER;
+        case 1: return &SUPASAUR;
+        case 2: return &SUPIRTLE;
+        default: return NULL;
+    }
 }

@@ -49,3 +49,31 @@ int add_supemon(Player* player, Supemon new_supemon)
     }
     return 0;
 }
+
+int display_supemons(Player* player)
+{
+    int i;
+    for (i = 0; i < MAX_SUPEMONS; i++)
+    {
+        Supemon* current = &player->supemons[i];
+        if (current->level == 0) break; // Found an empty slot
+
+        printf(i + 1, " - ", current->name, "\n");
+    }
+
+    return i;
+}
+
+int display_items(Player* player)
+{
+    int i;
+    for (i = 0; i < MAX_ITEMS; i++)
+    {
+        Item* current = player->items[i];
+        if (current == NULL) break; // Found an empty slot
+
+        printf(i + 1, " - ", current->name, "\n");
+    }
+
+    return i;
+}
