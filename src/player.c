@@ -58,7 +58,7 @@ int display_supemons(Player* player)
         Supemon* current = &player->supemons[i];
         if (current->level == 0) break; // Found an empty slot
 
-        printf(i + 1, " - ", current->name, "\n");
+        printf("%d - %s\n", i + 1, current->name);
     }
 
     return i;
@@ -72,7 +72,7 @@ int display_items(Player* player)
         Item* current = player->items[i];
         if (current == NULL) break; // Found an empty slot
 
-        printf(i + 1, " - ", current->name, "\n");
+        printf("%d - %s\n", i + 1, current->name);
     }
 
     return i;

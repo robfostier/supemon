@@ -1,7 +1,7 @@
 #include "player.h"
 #include "supemon.h"
 
-void go_to_battle(Player* player);
+int go_to_battle(Player* player);
 void display_battle(Player* player, Supemon* foe);
 void battle_rewards(Player* player, Supemon* foe);
 

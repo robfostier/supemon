@@ -7,7 +7,7 @@
 #include "supemon.h"
 #include "battle.h"
 
-void go_to_battle(Player* player)
+int go_to_battle(Player* player)
 {
     Supemon foe;
 
@@ -23,22 +23,26 @@ void go_to_battle(Player* player)
         if (turn_result == 1)
         {
             battle_rewards(player, &foe);
-            return;
+            return 1;
         }
         else if (turn_result == 2) // If an item was used, player gets another turn
         {
             if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
             {
                 battle_rewards(player, &foe);
-                return;
+                return 1;
             }
         }
 
-        if (foe_turn(player, &foe) == 1) return; // 0 if battle still ongoing, 1 if turn ends battle
+        if (foe_turn(player, &foe) == 1) return 1; // 0 if battle still ongoing, 1 if turn ends battle
     }
 }
 
-void display_battle(Player* player, Supemon* foe); // TO DO
+void display_battle(Player* player, Supemon* foe)
+{
+    return;
+    // TO DO
+}
 
 void battle_rewards(Player* player, Supemon* foe)
 {
@@ -77,16 +81,17 @@ int player_turn(Player* player, Supemon* foe, int item_count)
     switch (choice)
     {
         case 1:
+        {
             // Print all moves
             int move_count;
             for (move_count = 0; move_count < MAX_MOVES; move_count++)
             {
                 Move* move = get_active_supemon(player)->moves[move_count];
                 if (move == NULL) break;
-                printf(move_count + 1, " - ", move->name, "\n");
+                printf("%d - %s\n", move_count + 1, move->name);
             }
 
-            print(move_count + 1, " - Cancel\n");
+            printf("%d - Cancel\n", move_count + 1);
 
             // Player selects a move
             int chosen_move = 0;
@@ -104,10 +109,11 @@ int player_turn(Player* player, Supemon* foe, int item_count)
 
             if (foe->health > 0) return 0; // Battle can continue
             return 1; // Battle needs to stop if foe fainted
-
+        }
         case 2:
+        {
             int supemon_count = display_supemons(player);
-            print(supemon_count + 1, " - Cancel\n");
+            printf("%d - Cancel\n", supemon_count + 1);
 
             int chosen_mon = 0;
             while (chosen_mon < 1 || chosen_mon > supemon_count + 1)
@@ -122,12 +128,13 @@ int player_turn(Player* player, Supemon* foe, int item_count)
             set_active_supemon(player, chosen_mon - 1);
 
             return 0; // Player switched Supemon, battle can continue
-
+        }
         case 3:
+        {
             if (item_count < 4) // Can only use item if hasn't already used 4 during battle
             {
                 int item_count = display_items(player);
-                print(item_count + 1, " - Cancel\n");
+                printf("%d - Cancel\n", item_count +1);
 
                 int chosen_item = 0;
                 while (chosen_item < 1 || chosen_item > item_count + 1)
@@ -151,23 +158,25 @@ int player_turn(Player* player, Supemon* foe, int item_count)
                 printf("Can't use item !\n");
                 break; // Player can't use item, abort turn
             }
-
+        }
         case 4:
+        {
             srand(time(NULL));
             float rnd = (float)rand() / RAND_MAX;
 
             if (rnd <= (foe->max_health - foe->health) / foe->max_health - .5f)
             {
                 add_supemon(player, *foe);
-                printf("Successfully captured ", foe->name, " !\n");
+                printf("Successfully captured %s !\n", foe->name);
                 return 1; // Foe captured, battle needs to end
             }
             else{
                 printf("Capture failed...");
                 return 0; // Battle can continue
             }
-
+        }
         case 5:
+        {
             srand(time(NULL));
             float rnd = (float)rand() / RAND_MAX;
 
@@ -181,7 +190,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
                 printf("You failed to run away from the battle...");
                 return 0; // Battle can continue
             }
-
+        }
         default: break;
     }
 
@@ -210,4 +219,8 @@ int foe_turn(Player* player, Supemon* foe)
     return 1; // Battle needs to stop if player's active supemon has fainted
 }
 
-void apply_move(Move* move, Supemon* attacker, Supemon* target);
+void apply_move(Move* move, Supemon* attacker, Supemon* target)
+{
+    // TO DO
+    return;
+}

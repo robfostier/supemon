@@ -2,7 +2,8 @@
 
 #include "main.h"
 #include "global.h"
-#include "utils.h"  
+#include "utils.h"
+#include "battle.h"
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
@@ -116,10 +117,10 @@ void chose_action(Player* player)
             go_to_battle(player);
             break;
         case 2:
-            go_to_shop(player);
+            //go_to_shop(player);
             break;
         case 3:
-            go_to_center(player);
+            //go_to_center(player);
             break;
         case 4:
             // TO DO
