@@ -9,7 +9,7 @@ typedef struct {
     Supemon supemons[MAX_SUPEMONS];
     int active_index;
     unsigned int coins;
-    Item* items[MAX_ITEMS];
+    const Item* items[MAX_ITEMS];
 } Player;
 
 void init_player(Player* player, const char* name, Supemon starter);
@@ -19,3 +19,8 @@ int add_supemon(Player* player, Supemon new_supemon);
 
 int display_supemons(Player* player);
 int display_items(Player* player);
+
+int get_item_count(Player* player);
+void remove_item(Player* player, int index);
+
+void use_item(Player* player, Supemon* supemon, int index);

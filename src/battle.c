@@ -2,17 +2,19 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "battle.h"
 #include "global.h"
 #include "player.h"
 #include "supemon.h"
-#include "battle.h"
+#include "moves.h"
+#include "items.h"
 
 int go_to_battle(Player* player)
 {
     Supemon* active = get_active_supemon(player);
     Supemon foe;
 
-    Supemon* random_mon = get_random_supemon_template();
+    const Supemon* random_mon = get_random_supemon_template();
     if (random_mon != NULL) foe = init_supemon(random_mon, active->level);
     else return 0; // Error on random init
     
@@ -75,7 +77,7 @@ void battle_rewards(Player* player, Supemon* foe)
     gain_experience(get_active_supemon(player), gained_xp);
 }
 
-int player_turn(Player* player, Supemon* foe, int item_count)
+int player_turn(Player* player, Supemon* foe, int used_item_count)
 {
     // SET SEED
     printf("Your turn...\n\n");
@@ -110,7 +112,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
             int move_count;
             for (move_count = 0; move_count < MAX_MOVES; move_count++)
             {
-                Move* move = active->moves[move_count];
+                const Move* move = active->moves[move_count];
                 if (move == NULL) break;
                 printf("%d - %s\n", move_count + 1, move->name);
             }
@@ -155,9 +157,9 @@ int player_turn(Player* player, Supemon* foe, int item_count)
         }
         case 3:
         {
-            if (item_count < 4) // Can only use item if hasn't already used 4 during battle
+            if (used_item_count < 4) // Can only use item if hasn't already used 4 during battle
             {
-                int item_count = display_items(player);
+                int item_count = display_items(player); // display_items() also returns the count, better than just get_item_count() here
                 printf("%d - Cancel\n", item_count +1);
 
                 int chosen_item = 0;
@@ -170,11 +172,9 @@ int player_turn(Player* player, Supemon* foe, int item_count)
 
                 if (chosen_item == item_count + 1) break; // Player cancelled action, needs to abort turn
 
-                Item* item = player->items[chosen_item - 1];
+                use_item(player, active, chosen_item - 1);
 
-                // TO DO : IMPLEMENT ITEMS
-
-                item_count++;
+                used_item_count++;
                 return 2; // Player used item, can play one more turn
             }
             else
@@ -219,7 +219,7 @@ int player_turn(Player* player, Supemon* foe, int item_count)
         default: break;
     }
 
-    return player_turn(player, foe, item_count); // If we reach here, turn was aborted, start another one
+    return player_turn(player, foe, used_item_count); // If we reach here, turn was aborted, start another one
 }
 
 int foe_turn(Player* player, Supemon* foe)
@@ -230,14 +230,14 @@ int foe_turn(Player* player, Supemon* foe)
     int move_count;
     for (move_count = 0; move_count < MAX_MOVES; move_count++)
     {
-        Move* move = foe->moves[move_count];
+        const Move* move = foe->moves[move_count];
         if (move == NULL) break;
     }
     if (move_count == 0) return 1; // Foe doesn't have any move, leave battle
 
     // Pick a random move
     int rnd = rand() % move_count;
-    Move* chosen_move = foe->moves[rnd];
+    const Move* chosen_move = foe->moves[rnd];
 
     apply_move(chosen_move, foe, active);
 
@@ -245,7 +245,7 @@ int foe_turn(Player* player, Supemon* foe)
     return 1; // Battle needs to stop if player's active supemon has fainted
 }
 
-void apply_move(Move* move, Supemon* attacker, Supemon* target)
+void apply_move(const Move* move, Supemon* attacker, Supemon* target)
 {
     switch(move->type)
     {

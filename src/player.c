@@ -5,6 +5,7 @@
 #include "global.h"
 #include "player.h"
 #include "supemon.h"
+#include "items.h"
 
 void init_player(Player* player, const char* name, Supemon starter)
 {
@@ -64,16 +65,78 @@ int display_supemons(Player* player)
     return i;
 }
 
+/**
+ * Display player's items and return the count.
+ */
 int display_items(Player* player)
 {
     int i;
     for (i = 0; i < MAX_ITEMS; i++)
     {
-        Item* current = player->items[i];
+        const Item* current = player->items[i];
         if (current == NULL) break; // Found an empty slot
 
         printf("%d - %s\n", i + 1, current->name);
     }
 
     return i;
+}
+
+/**
+ * Return the count of player's items.
+ */
+int get_item_count(Player* player)
+{
+    int i;
+    for (i = 0; i < MAX_ITEMS; i++)
+    {
+        const Item* current = player->items[i];
+        if (current == NULL) break; // Found an empty slot
+    }
+
+    return i;
+}
+
+void remove_item(Player* player, int index)
+{
+    if (index < 0 || index >= MAX_ITEMS) return;
+
+    int max_index = get_item_count(player) - 1; // get the index of players's last item in the array
+    if (max_index < 0 || max_index > MAX_ITEMS - 1) return;
+
+    for (int i = index; i < max_index; i++)
+    {
+        player->items[i] = player->items[i + 1]; // starting at used item pos, move every following item one index to the left
+    }
+
+    player->items[max_index] = NULL; // set last pointer to NULL
+}
+
+void use_item(Player* player, Supemon* supemon, int index)
+{
+    const Item* item = player->items[index];
+
+    switch (item->type)
+    {
+        case ITEM_POTION:
+        {
+            update_health(supemon, 5);
+            break;
+        }
+        case ITEM_SUPER_POTION:
+        {
+            update_health(supemon, 10);
+            break;
+        }
+        case ITEM_RARE_CANDY:
+        {
+            // Do this instead of calling level_up() to give a full level
+            unsigned int gained_xp = xp_to_next_level(supemon->level);
+            gain_experience(supemon, gained_xp);
+            break;
+        }
+        default: break;
+    }
+
+    remove_item(player, index);
 }

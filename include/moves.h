@@ -16,8 +16,8 @@ typedef struct {
     MoveType type;
 } Move;
 
-extern Move SCRATCH;
-extern Move GRAWL;
-extern Move POUND;
-extern Move FOLIAGE;
-extern Move SHELL;
+extern const Move SCRATCH;
+extern const Move GRAWL;
+extern const Move POUND;
+extern const Move FOLIAGE;
+extern const Move SHELL;

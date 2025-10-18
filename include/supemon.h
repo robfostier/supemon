@@ -18,18 +18,18 @@ typedef struct {
     int accuracy;
     int base_accuracy;
     int speed;
-    Move* moves[MAX_MOVES];
+    const Move* moves[MAX_MOVES];
 } Supemon;
 
-extern Supemon SUPMANDER;
-extern Supemon SUPASAUR;
-extern Supemon SUPIRTLE;
+extern const Supemon SUPMANDER;
+extern const Supemon SUPASAUR;
+extern const Supemon SUPIRTLE;
 
 /**
  * Initalize a Supemon.
  * Makes a copy from a template and assigns it a level.
  */
-Supemon init_supemon(Supemon* template, unsigned int level);
+Supemon init_supemon(const Supemon* template, unsigned int level);
 
 void level_up(Supemon* supemon);
 void increase_stat(int* stat, float mult);
@@ -41,4 +41,4 @@ void update_health(Supemon* supemon, int value);
  * Return a random Supemon* template.
  * Returns NULL on failure.
  */
-Supemon* get_random_supemon_template();
+const Supemon* get_random_supemon_template();

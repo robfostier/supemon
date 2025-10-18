@@ -3,6 +3,10 @@
     "files.associations": {
         "windows.h": "c",
         "utils.h": "c",
-        "supemon.h": "c"
+        "supemon.h": "c",
+        "player.h": "c",
+        "battle.h": "c",
+        "moves.h": "c",
+        "items.h": "c"
     }
 }

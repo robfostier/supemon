@@ -4,7 +4,7 @@
 #include "supemon.h"
 #include "moves.h"
 
-Supemon SUPMANDER = {
+const Supemon SUPMANDER = {
     .name = "Supmander",
     .level = 1,
     .experience = 0,
@@ -22,7 +22,7 @@ Supemon SUPMANDER = {
     .moves = {&SCRATCH, &GRAWL, NULL, NULL}
 };
 
-Supemon SUPASAUR = {
+const Supemon SUPASAUR = {
     .name = "Supasaur",
     .level = 1,
     .experience = 0,
@@ -40,7 +40,7 @@ Supemon SUPASAUR = {
     .moves = {&POUND, &FOLIAGE, NULL, NULL}
 };
 
-Supemon SUPIRTLE = {
+const Supemon SUPIRTLE = {
     .name = "Supirtle",
     .level = 1,
     .experience = 0,
@@ -58,7 +58,7 @@ Supemon SUPIRTLE = {
     .moves = {&POUND, &SHELL, NULL, NULL}
 };
 
-Supemon init_supemon(Supemon* template, unsigned int level)
+Supemon init_supemon(const Supemon* template, unsigned int level)
 {
     Supemon new_supemon = *template;
 
@@ -131,7 +131,7 @@ void update_health(Supemon* supemon, int value)
     else if (supemon->health > supemon->max_health) supemon->health = supemon->max_health; 
 }
 
-Supemon* get_random_supemon_template()
+const Supemon* get_random_supemon_template()
 {
     int rnd = rand() % 3;
     
