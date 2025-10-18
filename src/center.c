@@ -43,6 +43,8 @@ void go_to_center(Player* player)
                 }
 
                 // Message de confirmation
+                npc_dialog("...", 500);
+                printf("\n\n");
                 npc_dialog("\"Your Supemons have been fully healed ! Come back anytime !\" says nurse Ornella.\n\n", 20);
 
                 break;
