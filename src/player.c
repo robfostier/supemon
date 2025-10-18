@@ -1,7 +1,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "global.h"
 #include "player.h"
 #include "supemon.h"
@@ -155,3 +154,194 @@ int use_item(Player* player, Supemon* supemon, int index)
 
     return remove_item(player, index);
 }
+
+int save_game(Player* player)
+  {
+      FILE* file = fopen(SAVE_FILE, "w");
+      if (file == NULL)
+      {
+          printf("Error: Cannot create save file.\n");
+          return 0;
+      }
+
+      // 1. Nom du joueur
+      fprintf(file, "%s\n", player->name);
+
+      // 2. Supcoins
+      fprintf(file, "%u\n", player->coins);
+
+      // 3. Index actif
+      fprintf(file, "%d\n", player->active_index);
+
+      // 4. Nombre de Supémons
+      int supemon_count = 0;
+      for (int i = 0; i < MAX_SUPEMONS; i++)
+      {
+          if (player->supemons[i].level > 0) supemon_count++;
+          else break;
+      }
+      fprintf(file, "%d\n", supemon_count);
+
+      // 5. Chaque Supémon
+      for (int i = 0; i < supemon_count; i++)
+      {
+          Supemon* s = &player->supemons[i];
+          fprintf(file, "%s %u %u %d %d %d %d %d %d %d %d %d %d %d ",
+                  s->name, s->level, s->experience, s->health, s->max_health,
+                  s->attack, s->base_attack, s->defense, s->base_defense,
+                  s->evasion, s->base_evasion, s->accuracy, s->base_accuracy, s->speed);
+
+          // Moves (sauvegarder les noms)
+          for (int j = 0; j < MAX_MOVES; j++)
+          {
+              if (s->moves[j] != NULL)
+                  fprintf(file, "%s ", s->moves[j]->name);
+              else
+                  fprintf(file, "NONE ");
+          }
+          fprintf(file, "\n");
+      }
+
+      // 6. Items (utiliser des codes numériques)
+      int item_count = get_item_count(player);
+      fprintf(file, "%d\n", item_count);
+
+      for (int i = 0; i < item_count; i++)
+      {
+          // Sauvegarder un code : 1=Potion, 2=Super Potion, 3=Rare Candy
+          if (player->items[i] == &POTION)
+              fprintf(file, "1 ");
+          else if (player->items[i] == &SUPER_POTION)
+              fprintf(file, "2 ");
+          else if (player->items[i] == &RARE_CANDY)
+              fprintf(file, "3 ");
+          else
+              fprintf(file, "0 ");
+      }
+      fprintf(file, "\n");
+
+      fclose(file);
+      printf("\nGame saved successfully!\n");
+      return 1;
+  }
+
+int load_game(Player* player)
+  {
+      FILE* file = fopen(SAVE_FILE, "r");
+      if (file == NULL)
+      {
+          return 0;
+      }
+
+      // 1. Nom
+      if (fscanf(file, "%12s\n", player->name) != 1)
+      {
+          fclose(file);
+          return 0;
+      }
+
+      // 2. Coins
+      if (fscanf(file, "%u\n", &player->coins) != 1)
+      {
+          fclose(file);
+          return 0;
+      }
+
+      // 3. Index actif
+      if (fscanf(file, "%d\n", &player->active_index) != 1)
+      {
+          fclose(file);
+          return 0;
+      }
+
+      // 4. Nombre de Supémons
+      int supemon_count;
+      if (fscanf(file, "%d\n", &supemon_count) != 1)
+      {
+          fclose(file);
+          return 0;
+      }
+
+      // 5. Charger chaque Supémon
+      for (int i = 0; i < supemon_count; i++)
+      {
+          Supemon* s = &player->supemons[i];
+
+          if (fscanf(file, "%12s %u %u %d %d %d %d %d %d %d %d %d %d %d ",
+                     s->name, &s->level, &s->experience, &s->health, &s->max_health,
+                     &s->attack, &s->base_attack, &s->defense, &s->base_defense,
+                     &s->evasion, &s->base_evasion, &s->accuracy, &s->base_accuracy, &s->speed) != 14)
+          {
+              fclose(file);
+              return 0;
+          }
+
+          // Charger les moves
+          for (int j = 0; j < MAX_MOVES; j++)
+          {
+              char move_name[MAX_NAME_LENGTH];
+              if (fscanf(file, "%12s ", move_name) != 1)
+              {
+                  fclose(file);
+                  return 0;
+              }
+
+              if (strcmp(move_name, "NONE") == 0)
+                  s->moves[j] = NULL;
+              else if (strcmp(move_name, "Scratch") == 0)
+                  s->moves[j] = &SCRATCH;
+              else if (strcmp(move_name, "Pound") == 0)
+                  s->moves[j] = &POUND;
+              else if (strcmp(move_name, "Growl") == 0)
+                  s->moves[j] = &GRAWL;
+              else if (strcmp(move_name, "Foliage") == 0)
+                  s->moves[j] = &FOLIAGE;
+              else if (strcmp(move_name, "Shell") == 0)
+                  s->moves[j] = &SHELL;
+              else
+                  s->moves[j] = NULL;
+          }
+          fscanf(file, "\n");
+      }
+
+      // Initialiser les slots vides
+      for (int i = supemon_count; i < MAX_SUPEMONS; i++)
+      {
+          memset(&player->supemons[i], 0, sizeof(Supemon));
+      }
+
+      // 6. Items
+      int item_count;
+      if (fscanf(file, "%d\n", &item_count) != 1)
+      {
+          fclose(file);
+          return 0;
+      }
+
+      for (int i = 0; i < item_count; i++)
+      {
+          int item_code;
+          if (fscanf(file, "%d ", &item_code) != 1)
+          {
+              fclose(file);
+              return 0;
+          }
+
+          switch (item_code)
+          {
+              case 1: player->items[i] = &POTION; break;
+              case 2: player->items[i] = &SUPER_POTION; break;
+              case 3: player->items[i] = &RARE_CANDY; break;
+              default: player->items[i] = NULL; break;
+          }
+      }
+
+      // Initialiser les items restants
+      for (int i = item_count; i < MAX_ITEMS; i++)
+      {
+          player->items[i] = NULL;
+      }
+
+      fclose(file);
+      return 1;
+  }
