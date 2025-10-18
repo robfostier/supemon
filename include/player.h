@@ -39,3 +39,15 @@ int add_item(Player* player, const Item* item);
  * Returns 1 on success, 0 on failure.
  */
 int use_item(Player* player, Supemon* supemon, int index);
+
+/**
+ * Save player data to file.
+ * Returns 1 on success, 0 on failure.
+ */
+int save_game(Player* player);
+
+/**
+ * Load player data from file.
+ * Returns 1 on success, 0 on failure.
+ */
+int load_game(Player* player);
