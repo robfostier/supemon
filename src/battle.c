@@ -4,7 +4,6 @@
 
 #include "battle.h"
 #include "global.h"
-#include "utils.h"
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
@@ -13,51 +12,86 @@
 int go_to_battle(Player* player)
 {
     Supemon* active = get_active_supemon(player);
-    if (active->health <= 0)
-    {
-        printf("Your active Supemon cannot fight in this condition. Please visit the Supemon Center.\n");
-        return 0;
-    }
-
-    clear_terminal();
     Supemon foe;
 
     const Supemon* random_mon = get_random_supemon_template();
     if (random_mon != NULL) foe = init_supemon(random_mon, active->level);
     else return 0; // Error on random init
-    
+
+    // Determine who goes first based on Speed
+    int player_first;
+    if (active->speed > foe.speed)
+    {
+        player_first = 1;
+        printf("Your %s is faster and will attack first!\n\n", active->name);
+    }
+    else if (active->speed < foe.speed)
+    {
+        player_first = 0;
+        printf("Enemy %s is faster and will attack first!\n\n", foe.name);
+    }
+    else // Equal speed, random
+    {
+        player_first = (rand() % 2);
+        if (player_first) printf("Your %s will attack first!\n\n", active->name);
+        else printf("Enemy %s will attack first!\n\n", foe.name);
+    }
+
     int item_count = 0;
 
     while (1)
     {
-        int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
-        if (turn_result == 1)
+        if (player_first)
         {
-            clear_terminal();
-            printf("%s fainted. %s won the fight !\n", foe.name, active->name);
-            battle_rewards(player, &foe);
-            leave_battle(player);
-            return 1;
-        }
-        else if (turn_result == 2) // If an item was used, player gets another turn
-        {
-            if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
+            // Player goes first
+            int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
+            if (turn_result == 1)
             {
-                clear_terminal();
-                printf("%s fainted. %s won the fight !\n", foe.name, active->name);
                 battle_rewards(player, &foe);
                 leave_battle(player);
                 return 1;
             }
-        }
+            else if (turn_result == 2) // If an item was used, player gets another turn
+            {
+                if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
+                {
+                    battle_rewards(player, &foe);
+                    leave_battle(player);
+                    return 1;
+                }
+            }
 
-        if (foe_turn(player, &foe) == 1) // 0 if battle still ongoing, 1 if turn ends battle
+            if (foe_turn(player, &foe) == 1)
+            {
+                leave_battle(player);
+                return 1; // 0 if battle still ongoing, 1 if turn ends battle
+            }
+        }
+        else
         {
-            clear_terminal();
-            printf("%s fainted. %s won the fight !\n", active->name, foe.name);
-            npc_dialog("\n....", 1000);
-            leave_battle(player);
-            return 1;
+            // Foe goes first
+            if (foe_turn(player, &foe) == 1)
+            {
+                leave_battle(player);
+                return 1; // 0 if battle still ongoing, 1 if turn ends battle
+            }
+
+            int turn_result = player_turn(player, &foe, item_count);
+            if (turn_result == 1)
+            {
+                battle_rewards(player, &foe);
+                leave_battle(player);
+                return 1;
+            }
+            else if (turn_result == 2) // If an item was used, player gets another turn
+            {
+                if (player_turn(player, &foe, 5) == 1)
+                {
+                    battle_rewards(player, &foe);
+                    leave_battle(player);
+                    return 1;
+                }
+            }
         }
     }
 }
@@ -66,26 +100,36 @@ void display_battle(Player* player, Supemon* foe)
 {
     Supemon* active = get_active_supemon(player);
     
-    display_supemon(foe, "enemy");
-    display_supemon(active, player->name);
+    printf("--------------------------------\n");
+    printf("%s (enemy)\n", foe->name);
+    printf("--------------------------------\n");
+    printf(" HP:%d/%d         Lvl:%d        \n", foe->health, foe->max_health, foe->level);
+    printf(" Atk:%d            Def:%d        \n", foe->attack + foe->base_attack, foe->defense + foe->base_defense);
+    printf(" Acc:%d            Eva:%d        \n", foe->accuracy + foe->base_accuracy, foe->evasion + foe->base_evasion);
+    printf("--------------------------------\n");
+    printf("%s (%s)\n", active->name, player->name);
+    printf("--------------------------------\n");
+    printf(" HP:%d/%d         Lvl:%d        \n", active->health, active->max_health, active->level);
+    printf(" Atk:%d            Def:%d        \n", active->attack + active->base_attack, active->defense + active->base_defense);
+    printf(" Acc:%d            Eva:%d        \n", active->accuracy + active->base_accuracy, active->evasion + active->base_evasion);
+    printf("--------------------------------\n");
+    return;
+    // TO DO
 }
 
 void battle_rewards(Player* player, Supemon* foe)
 {
-    Supemon* active = get_active_supemon(player);
     int gained_coins = rand() % 401 + 100; // rand % 401 -> (0, ..., 400), + 100 = (100, ..., 500)
     int gained_xp = (rand() % 401 + 100) * foe->level; // (100, ..., 500) * enemy level
 
     player->coins += gained_coins;
-    gain_experience(active, gained_xp);
-
-    printf("%s gained %d experience points.\n", active->name, gained_xp);
-    npc_dialog("\n....", 1000);
+    gain_experience(get_active_supemon(player), gained_xp);
 }
 
 int player_turn(Player* player, Supemon* foe, int used_item_count)
 {
-    printf("\nYour turn...\n\n");
+    // SET SEED
+    printf("Your turn...\n\n");
     
     display_battle(player, foe);
 
@@ -96,7 +140,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
     printf("|   3. Use item                |\n");
     printf("|   4. Capture                 |\n");
     printf("|   5. Run away                |\n");
-    printf("+------------------------------+\n\n");
+    printf("+------------------------------+\n");
 
     int choice = 0;
     while (choice < 1 || choice > 5)
@@ -122,7 +166,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
                 printf("%d - %s\n", move_count + 1, move->name);
             }
 
-            printf("%d - Cancel\n\n", move_count + 1);
+            printf("%d - Cancel\n", move_count + 1);
 
             // Player selects a move
             int chosen_move = 0;
@@ -144,7 +188,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
         case 2:
         {
             int supemon_count = display_supemons(player);
-            printf("%d - Cancel\n\n", supemon_count + 1);
+            printf("%d - Cancel\n", supemon_count + 1);
 
             int chosen_mon = 0;
             while (chosen_mon < 1 || chosen_mon > supemon_count + 1)
@@ -165,7 +209,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             if (used_item_count < 4) // Can only use item if hasn't already used 4 during battle
             {
                 int item_count = display_items(player); // display_items() also returns the count, better than just get_item_count() here
-                printf("%d - Cancel\n\n", item_count +1);
+                printf("%d - Cancel\n", item_count +1);
 
                 int chosen_item = 0;
                 while (chosen_item < 1 || chosen_item > item_count + 1)
@@ -184,7 +228,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             }
             else
             {
-                printf("Can't use item !\n\n");
+                printf("Can't use item !\n");
                 break; // Player can't use item, abort turn
             }
         }
@@ -229,8 +273,6 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
 
 int foe_turn(Player* player, Supemon* foe)
 {
-    printf("\nEnemy turn...\n\n");
-
     Supemon* active = get_active_supemon(player);
 
     // Get foe move count
@@ -281,69 +323,33 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
 
                 //printf("%f atk, %f def, %f acc, %f eva, %f dmg", a_atk, t_def, a_acc, t_eva, dmg);
 
-                if ((float)rand() / RAND_MAX > dodge_rate)
-                {
-                    update_health(target, -(int)dmg);
-                    printf("%s used %s. %s takes %d damage.\n", attacker->name, move->name, target->name, (int)dmg);
-                }
-                else printf("%s dodged %s's attack.\n", target->name, attacker->name);
+                if ((float)rand() / RAND_MAX <= dodge_rate) update_health(target, -(int)dmg);
+                else printf("%s dodged %s's attack !\n", target->name, attacker->name);
             }
             break;
         }
         case MOVE_ATTACK:
         {
-            if (move->damage > 0)
-            {
-                attacker->attack += move->damage;
-                printf("%s used %s. %s's attack was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
-            }
-            else
-            {
-                target->attack += move->damage;
-                printf("%s used %s. %s's attack was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
-            }
+            if (move->damage > 0) attacker->attack += move->damage;
+            else target->attack += move->damage;
             break;
         }
         case MOVE_DEFENSE:
         {
-            if (move->damage > 0)
-            {
-                attacker->defense += move->damage;
-                printf("%s used %s. %s's defense was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
-            }
-            else
-            {
-                target->defense += move->damage;
-                printf("%s used %s. %s's defense was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
-            }
+            if (move->damage > 0) attacker->defense += move->damage;
+            else target->defense += move->damage;
             break;
         }
         case MOVE_ACCURACY:
         {
-            if (move->damage > 0)
-            {
-                attacker->accuracy += move->damage;
-                printf("%s used %s. %s's accuracy was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
-            }
-            else
-            {
-                target->accuracy += move->damage;
-                printf("%s used %s. %s's accuracy was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
-            }
+            if (move->damage > 0) attacker->accuracy += move->damage;
+            else target->accuracy += move->damage;
             break;
         }
         case MOVE_EVASION:
         {
-            if (move->damage > 0)
-            {
-                attacker->evasion += move->damage;
-                printf("%s used %s. %s's evasion was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
-            }
-            else
-            {
-                target->evasion += move->damage;
-                printf("%s used %s. %s's evasion was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
-            }
+            if (move->damage > 0) attacker->evasion += move->damage;
+            else target->evasion += move->damage;
             break;
         }
         default: break;
