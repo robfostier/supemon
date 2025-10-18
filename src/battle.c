@@ -51,19 +51,19 @@ void display_battle(Player* player, Supemon* foe)
 {
     Supemon* active = get_active_supemon(player);
     
-    printf("---------------------------------\n");
+    printf("--------------------------------\n");
     printf("%s (enemy)\n", foe->name);
-    printf("---------------------------------\n");
-    printf(" HP:%d/%d          Lvl:%d        \n", foe->health, foe->max_health, foe->level);
-    printf(" Atk:%d             Def:%d        \n", foe->attack + foe->base_attack, foe->defense + foe->base_defense);
-    printf(" Acc:%d             Eva:%d        \n", foe->accuracy + foe->base_accuracy, foe->evasion + foe->base_evasion);
-    printf("---------------------------------\n");
+    printf("--------------------------------\n");
+    printf(" HP:%d/%d         Lvl:%d        \n", foe->health, foe->max_health, foe->level);
+    printf(" Atk:%d            Def:%d        \n", foe->attack + foe->base_attack, foe->defense + foe->base_defense);
+    printf(" Acc:%d            Eva:%d        \n", foe->accuracy + foe->base_accuracy, foe->evasion + foe->base_evasion);
+    printf("--------------------------------\n");
     printf("%s (%s)\n", active->name, player->name);
-    printf("---------------------------------\n");
-    printf(" HP:%d/%d          Lvl:%d        \n", active->health, active->max_health, active->level);
-    printf(" Atk:%d             Def:%d        \n", active->attack + active->base_attack, active->defense + active->base_defense);
-    printf(" Acc:%d             Eva:%d        \n", active->accuracy + active->base_accuracy, active->evasion + active->base_evasion);
-    printf("---------------------------------\n");
+    printf("--------------------------------\n");
+    printf(" HP:%d/%d         Lvl:%d        \n", active->health, active->max_health, active->level);
+    printf(" Atk:%d            Def:%d        \n", active->attack + active->base_attack, active->defense + active->base_defense);
+    printf(" Acc:%d            Eva:%d        \n", active->accuracy + active->base_accuracy, active->evasion + active->base_evasion);
+    printf("--------------------------------\n");
     return;
     // TO DO
 }
@@ -84,14 +84,14 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
     
     display_battle(player, foe);
 
-    printf("+-------------------------------+\n");
-    printf("| What will you do ?            |\n");
-    printf("|   1. Move                     |\n");
-    printf("|   2. Change active Supemon    |\n");
-    printf("|   3. Use item                 |\n");
-    printf("|   4. Capture                  |\n");
-    printf("|   5. Run away                 |\n");
-    printf("+-------------------------------+\n");
+    printf("+------------------------------+\n");
+    printf("| What will you do ?           |\n");
+    printf("|   1. Move                    |\n");
+    printf("|   2. Change active Supemon   |\n");
+    printf("|   3. Use item                |\n");
+    printf("|   4. Capture                 |\n");
+    printf("|   5. Run away                |\n");
+    printf("+------------------------------+\n");
 
     int choice = 0;
     while (choice < 1 || choice > 5)

@@ -53,12 +53,12 @@ Player start_game(void)
 
     npc_dialog("\nYou are presented with a strange box.\nIt appears to contain 3 strange balls.\n\n", 10);
 
-    printf("+-------------------------------+\n");
-    printf("| Choose your starter Supemon : |\n");
-    printf("|   1. Supmander                |\n");
-    printf("|   2. Supasaur                 |\n");
-    printf("|   3. Supirtle                 |\n");
-    printf("+-------------------------------+\n");
+    printf("+------------------------------+\n");
+    printf("| Choose your starter Supemon: |\n");
+    printf("|   1. Supmander               |\n");
+    printf("|   2. Supasaur                |\n");
+    printf("|   3. Supirtle                |\n");
+    printf("+------------------------------+\n");
 
     int choice = 0;
     while (choice < 1 || choice > 3)
@@ -104,13 +104,13 @@ Player start_game(void)
 
 int chose_action(Player* player)
 {
-    printf("+-------------------------------+\n");
-    printf("| Where do you want to go now ? |\n");
-    printf("|   1. Into the wild            |\n");
-    printf("|   2. Supemart                 |\n");
-    printf("|   3. Supemon Center           |\n");
-    printf("|   4. Leave the Game           |\n");
-    printf("+-------------------------------+\n");
+    printf("+------------------------------+\n");
+    printf("| Where do you want to go ?    |\n");
+    printf("|   1. Into the wild           |\n");
+    printf("|   2. Supemart                |\n");
+    printf("|   3. Supemon Center          |\n");
+    printf("|   4. Leave the Game          |\n");
+    printf("+------------------------------+\n");
 
     int choice = 0;
     while (choice < 1 || choice > 4)
