@@ -265,6 +265,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             {
                 clear_terminal();
                 printf("You ran away !\n\n");
+                npc_dialog("...", 1000);
                 return 1; // Ran away, battle needs to end
             }
             else
