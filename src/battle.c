@@ -172,7 +172,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
 
                 if (chosen_item == item_count + 1) break; // Player cancelled action, needs to abort turn
 
-                use_item(player, active, chosen_item - 1);
+                if (use_item(player, active, chosen_item - 1) == 0) return 0; // Something went wrong, end turn
 
                 used_item_count++;
                 return 2; // Player used item, can play one more turn

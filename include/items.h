@@ -10,7 +10,7 @@ typedef enum {
 
 typedef struct {
     char name[MAX_NAME_LENGTH];
-    int price;
+    unsigned int price;
     ItemType type;
 } Item;
 

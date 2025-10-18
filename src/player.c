@@ -97,12 +97,12 @@ int get_item_count(Player* player)
     return i;
 }
 
-void remove_item(Player* player, int index)
+int remove_item(Player* player, int index)
 {
-    if (index < 0 || index >= MAX_ITEMS) return;
+    if (index < 0 || index >= MAX_ITEMS) return 0;
 
     int max_index = get_item_count(player) - 1; // get the index of players's last item in the array
-    if (max_index < 0 || max_index > MAX_ITEMS - 1) return;
+    if (max_index < 0 || max_index > MAX_ITEMS - 1) return 0;
 
     for (int i = index; i < max_index; i++)
     {
@@ -110,9 +110,24 @@ void remove_item(Player* player, int index)
     }
 
     player->items[max_index] = NULL; // set last pointer to NULL
+    return 1;
 }
 
-void use_item(Player* player, Supemon* supemon, int index)
+int add_item(Player* player, const Item* item)
+{
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        if (player->items[i] == NULL)
+        {
+            player->items[i] = item;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int use_item(Player* player, Supemon* supemon, int index)
 {
     const Item* item = player->items[index];
 
@@ -135,8 +150,8 @@ void use_item(Player* player, Supemon* supemon, int index)
             gain_experience(supemon, gained_xp);
             break;
         }
-        default: break;
+        default: return 0;
     }
 
-    remove_item(player, index);
+    return remove_item(player, index);
 }

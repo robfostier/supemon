@@ -21,6 +21,21 @@ int display_supemons(Player* player);
 int display_items(Player* player);
 
 int get_item_count(Player* player);
-void remove_item(Player* player, int index);
 
-void use_item(Player* player, Supemon* supemon, int index);
+/**
+ * Remove Item* from player's item list.
+ * Returns 1 on success, 0 on failure.
+ */
+int remove_item(Player* player, int index);
+
+/**
+ * Add Item* to player's item list.
+ * Returns 1 on success, 0 on failure.
+ */
+int add_item(Player* player, const Item* item);
+
+/**
+ * Use Item on player's Supemon.
+ * Returns 1 on success, 0 on failure.
+ */
+int use_item(Player* player, Supemon* supemon, int index);

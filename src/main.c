@@ -6,6 +6,7 @@
 #include "global.h"
 #include "utils.h"
 #include "battle.h"
+#include "shop.h"
 #include "center.h"
 #include "player.h"
 #include "supemon.h"
@@ -103,7 +104,7 @@ void chose_action(Player* player)
     printf("+-------------------------------+\n");
     printf("| Where do you want to go now ? |\n");
     printf("|   1. Into the wild            |\n");
-    printf("|   2. Shop                     |\n");
+    printf("|   2. Supemart                 |\n");
     printf("|   3. Supemon Center           |\n");
     printf("|   4. Leave the Game           |\n");
     printf("+-------------------------------+\n");
@@ -123,7 +124,7 @@ void chose_action(Player* player)
             go_to_battle(player);
             break;
         case 2:
-            //go_to_shop(player);
+            go_to_shop(player);
             break;
         case 3:
             go_to_center(player);

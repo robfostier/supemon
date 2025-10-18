@@ -1,5 +1,8 @@
+#include <stdio.h>
+
 #include "center.h"
 #include "player.h"
+#include "utils.h"
 
 void go_to_center(Player* player)
 {
@@ -13,7 +16,7 @@ void go_to_center(Player* player)
     printf("+-------------------------------+\n");
 
     int choice = 0;
-    while (choice < 1 || choice > 4)
+    while (choice < 1 || choice > 3)
     {
         printf("\nYOUR CHOICE (1, 2 or 3): ");
         scanf("%d", &choice);
