@@ -101,7 +101,7 @@ void go_to_shop(Player* player)
                     char formatted_line[BOX_WIDTH + 1]; // buffer pour store la ligne à imprimer, de taille box_width + '\0'
 
                     snprintf(formatted_line, sizeof(formatted_line), "%3d. %-*s - %3d coins ",
-                            i + 1, 12, player->items[i]->name, player->items[i]->price); // Should be exactly 30 chars : 3 + 2 + 12 + 3 + 3 + 7
+                            i + 1, 12, player->items[i]->name, player->items[i]->price / 2); // Should be exactly 30 chars : 3 + 2 + 12 + 3 + 3 + 7
                     
                     int len = strlen(formatted_line); 
                     for (int j = len; j < BOX_WIDTH; j++) formatted_line[j] = ' '; // In case we change box_width size
@@ -110,7 +110,7 @@ void go_to_shop(Player* player)
                     
                     printf("|%s|\n", formatted_line);
                 }
-                printf("|%3d. Cancel                   |\n", catalog_count + 1);
+                printf("|%3d. Cancel                   |\n", item_count + 1);
                 printf("+----------------[%4d Supcoins]\n", player->coins);
 
                 int sell_option = 0;
@@ -124,8 +124,8 @@ void go_to_shop(Player* player)
 
                 if (sell_option == item_count + 1) break; // Player choose to cancel
 
-                remove_item(player, sell_option - 1);
                 player->coins += player->items[sell_option - 1]->price / 2; // Sell
+                remove_item(player, sell_option - 1);
 
                 break;
             }
