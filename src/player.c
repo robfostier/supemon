@@ -60,8 +60,8 @@ int display_supemons(Player* player)
         if (current->level == 0) break; // Found an empty slot
 
         printf("%d - %s\n", i + 1, current->name);
+        display_supemon(current, player->name);
     }
-
     return i;
 }
 
