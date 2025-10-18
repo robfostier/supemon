@@ -16,6 +16,8 @@ int go_to_battle(Player* player)
     if (active->health <= 0)
     {
         printf("Your active Supemon cannot fight in this condition. Please visit the Supemon Center.\n");
+        npc_dialog("...", 1000);
+        printf("\n");
         return 0;
     }
 
@@ -55,9 +57,6 @@ int go_to_battle(Player* player)
             int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
             if (turn_result == 1)
             {
-                clear_terminal();
-                printf("%s fainted. %s won the fight !\n", foe.name, active->name);
-                battle_rewards(player, &foe);
                 leave_battle(player);
                 return 1;
             }
@@ -65,9 +64,6 @@ int go_to_battle(Player* player)
             {
                 if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
                 {
-                    clear_terminal();
-                    printf("%s fainted. %s won the fight !\n", foe.name, active->name);
-                    battle_rewards(player, &foe);
                     leave_battle(player);
                     return 1;
                 }
@@ -75,9 +71,6 @@ int go_to_battle(Player* player)
 
             if (foe_turn(player, &foe) == 1) // 0 if battle still ongoing, 1 if turn ends battle
             {
-                clear_terminal();
-                printf("%s fainted. %s won the fight !\n", active->name, foe.name);
-                npc_dialog("\n....", 1000);
                 leave_battle(player);
                 return 1;
             }
@@ -87,9 +80,6 @@ int go_to_battle(Player* player)
             // Foe goes first
             if (foe_turn(player, &foe) == 1) // 0 if battle still ongoing, 1 if turn ends battle
             {
-                clear_terminal();
-                printf("%s fainted. %s won the fight !\n", active->name, foe.name);
-                npc_dialog("\n....", 1000);
                 leave_battle(player);
                 return 1;
             }
@@ -97,9 +87,6 @@ int go_to_battle(Player* player)
             int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
             if (turn_result == 1)
             {
-                clear_terminal();
-                printf("%s fainted. %s won the fight !\n", foe.name, active->name);
-                battle_rewards(player, &foe);
                 leave_battle(player);
                 return 1;
             }
@@ -107,15 +94,11 @@ int go_to_battle(Player* player)
             {
                 if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
                 {
-                    clear_terminal();
-                    printf("%s fainted. %s won the fight !\n", foe.name, active->name);
-                    battle_rewards(player, &foe);
                     leave_battle(player);
                     return 1;
                 }
             }
-        }
-        
+        }     
     }
 }
 
@@ -196,6 +179,10 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             apply_move(active->moves[chosen_move - 1], active, foe);
 
             if (foe->health > 0) return 0; // Battle can continue
+
+            clear_terminal();
+            printf("%s fainted. %s won the fight !\n", foe->name, active->name);
+            battle_rewards(player, foe);
             return 1; // Battle needs to stop if foe fainted
         }
         case 2:
@@ -251,10 +238,17 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             float health_ratio = (float)(foe->max_health - foe->health) / foe->max_health;
             float rate = health_ratio - 0.5f;
 
+            npc_dialog("...", 1000);
+            printf("\n\n");
+
             if (rnd <= rate)
             {
                 add_supemon(player, *foe);
-                printf("Successfully captured %s !\n\n", foe->name);
+                
+                clear_terminal();
+
+                printf("Successfully captured %s !\n", foe->name);
+                battle_rewards(player, foe);
                 return 1; // Foe captured, battle needs to end
             }
             else{
@@ -269,6 +263,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
 
             if (rnd <= rate)
             {
+                clear_terminal();
                 printf("You ran away !\n\n");
                 return 1; // Ran away, battle needs to end
             }
@@ -306,6 +301,9 @@ int foe_turn(Player* player, Supemon* foe)
     apply_move(chosen_move, foe, active);
 
     if (active->health > 0) return 0; // Battle can continue
+    clear_terminal();
+    printf("%s fainted. %s won the fight !\n", active->name, foe->name);
+    npc_dialog("...", 1000);
     return 1; // Battle needs to stop if player's active supemon has fainted
 }
 

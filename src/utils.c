@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -28,5 +29,9 @@ void npc_dialog(char *message, int time_in_ms)
 
 void clear_terminal(void)
 {
-    printf("\e[1;1H\e[2J");
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
