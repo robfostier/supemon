@@ -6,6 +6,8 @@
 
 void go_to_center(Player* player)
 {
+    clear_terminal();
+
     npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n", 20);
 
     printf("\n+------------------------------+\n");

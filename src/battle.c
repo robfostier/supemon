@@ -4,6 +4,7 @@
 
 #include "battle.h"
 #include "global.h"
+#include "utils.h"
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
@@ -11,6 +12,8 @@
 
 int go_to_battle(Player* player)
 {
+    clear_terminal();
+
     Supemon* active = get_active_supemon(player);
     Supemon foe;
 
@@ -51,21 +54,8 @@ void display_battle(Player* player, Supemon* foe)
 {
     Supemon* active = get_active_supemon(player);
     
-    printf("--------------------------------\n");
-    printf("%s (enemy)\n", foe->name);
-    printf("--------------------------------\n");
-    printf(" HP:%d/%d         Lvl:%d        \n", foe->health, foe->max_health, foe->level);
-    printf(" Atk:%d            Def:%d        \n", foe->attack + foe->base_attack, foe->defense + foe->base_defense);
-    printf(" Acc:%d            Eva:%d        \n", foe->accuracy + foe->base_accuracy, foe->evasion + foe->base_evasion);
-    printf("--------------------------------\n");
-    printf("%s (%s)\n", active->name, player->name);
-    printf("--------------------------------\n");
-    printf(" HP:%d/%d         Lvl:%d        \n", active->health, active->max_health, active->level);
-    printf(" Atk:%d            Def:%d        \n", active->attack + active->base_attack, active->defense + active->base_defense);
-    printf(" Acc:%d            Eva:%d        \n", active->accuracy + active->base_accuracy, active->evasion + active->base_evasion);
-    printf("--------------------------------\n");
-    return;
-    // TO DO
+    display_supemon(foe, "enemy");
+    display_supemon(active, player->name);
 }
 
 void battle_rewards(Player* player, Supemon* foe)
@@ -79,8 +69,9 @@ void battle_rewards(Player* player, Supemon* foe)
 
 int player_turn(Player* player, Supemon* foe, int used_item_count)
 {
+    clear_terminal();
     // SET SEED
-    printf("Your turn...\n\n");
+    printf("\nYour turn...\n\n");
     
     display_battle(player, foe);
 
@@ -91,7 +82,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
     printf("|   3. Use item                |\n");
     printf("|   4. Capture                 |\n");
     printf("|   5. Run away                |\n");
-    printf("+------------------------------+\n");
+    printf("+------------------------------+\n\n");
 
     int choice = 0;
     while (choice < 1 || choice > 5)

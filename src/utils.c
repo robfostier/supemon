@@ -25,3 +25,8 @@ void npc_dialog(char *message, int time_in_ms)
         char_count++;
     }
 }
+
+void clear_terminal(void)
+{
+    printf("\e[1;1H\e[2J");
+}

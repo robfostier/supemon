@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "supemon.h"
 #include "moves.h"
@@ -142,4 +144,54 @@ const Supemon* get_random_supemon_template()
         case 2: return &SUPIRTLE;
         default: return NULL;
     }
+}
+
+void display_supemon(Supemon* supemon, char player_name[])
+{
+    // HP
+    int hp_len = 5 + snprintf(NULL, 0, "%d", supemon->health) + snprintf(NULL, 0, "%d", supemon->max_health); // " [" + "/" + "] "
+    int hp_spaces = BOX_WIDTH - hp_len;
+
+    if (hp_spaces < 0) hp_spaces = 0;
+
+    printf("+");
+    for (int i = 0; i < hp_spaces; i++) printf("-");
+    printf("-[%d/%d]-+\n", supemon->health, supemon->max_health);
+
+    // NAME
+    int name_len = strlen(supemon->name) + strlen(player_name) + 4; // " Supemon (player)"
+    int name_spaces = BOX_WIDTH - name_len;
+
+    if (name_spaces < 0) name_spaces = 0;
+    printf("| %s (%s)%*s|\n", supemon->name, player_name, name_spaces, "");
+    
+    // LVL + XP BAR
+    int lvl_len = 10 + snprintf(NULL, 0, "%d", supemon->level); // " [" + progress bar + "] Lvl. {lvl} "
+    int xp_bar_len = BOX_WIDTH - lvl_len;
+
+    if (xp_bar_len < 0) xp_bar_len = 0; // Avoid bugs
+
+    float xp_ratio = (float)supemon->experience / xp_to_next_level(supemon->level);
+    if (xp_ratio > 1.0f) xp_ratio = 1.0f;
+    if (xp_ratio < 0.0f) xp_ratio = 0.0f;
+    int progress = (int)(xp_ratio * xp_bar_len);
+
+    char xp_bar[BOX_WIDTH - 10]; // maximum size
+
+    for (int i = 0; i < xp_bar_len; i++)
+    {
+        if (i < progress) xp_bar[i] = '#';
+        else xp_bar[i] = '-';
+    }
+
+    xp_bar[xp_bar_len] = '\0';
+
+    printf("| Lvl. %d [%s] |\n", supemon->level, xp_bar);
+    
+    printf("+------------------------------+\n");
+
+    // STATS BOX
+    printf("| Atk: %-3d            Def: %-3d |\n", supemon->attack + supemon->base_attack, supemon->defense + supemon->base_defense);
+    printf("| Acc: %-3d            Eva: %-3d |\n", supemon->accuracy + supemon->base_accuracy, supemon->evasion + supemon->base_evasion);
+    printf("+------------------------------+\n\n");
 }

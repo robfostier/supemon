@@ -6,6 +6,8 @@
 
 void go_to_shop(Player* player)
 {
+    clear_terminal();
+
     const Item* catalog[] = {&POTION, &SUPER_POTION, &RARE_CANDY};
     int catalog_count = sizeof(catalog) / sizeof(catalog[0]);
     

@@ -16,11 +16,13 @@ int main(void)
 {
     // SET SEED
     srand(time(NULL));
+    clear_terminal();
 
     Player player = start_game();
 
     while(1)
     {
+        clear_terminal();
         if (chose_action(&player) == 0) break;
     }
 

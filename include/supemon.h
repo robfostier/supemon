@@ -42,3 +42,5 @@ void update_health(Supemon* supemon, int value);
  * Returns NULL on failure.
  */
 const Supemon* get_random_supemon_template();
+
+void display_supemon(Supemon* supemon, char player_name[]);
