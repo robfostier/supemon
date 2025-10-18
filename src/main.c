@@ -6,6 +6,7 @@
 #include "global.h"
 #include "utils.h"
 #include "battle.h"
+#include "center.h"
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
@@ -125,22 +126,10 @@ void chose_action(Player* player)
             //go_to_shop(player);
             break;
         case 3:
-            //go_to_center(player);
+            go_to_center(player);
             break;
         case 4:
             // TO DO
             break; 
     }
-}
-
-void go_to_center(Player* player)
-{
-    npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n", 20);
-
-    printf("+-------------------------------+\n");
-    printf("| What do you wish to do ?      |\n");
-    printf("|   1. Heal all Supemons        |\n");
-    printf("|   2. Change active Supemon    |\n");
-    printf("|   4. Leave the Center         |\n");
-    printf("+-------------------------------+\n");
 }
