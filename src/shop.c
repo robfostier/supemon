@@ -14,7 +14,7 @@ void go_to_shop(Player* player)
     {
         int item_count = get_item_count(player);
 
-        printf("+-------------------------------+\n");
+        printf("\n+-------------------------------+\n");
         printf("| What do you wish to do ?      |\n");
         printf("|   1. See what's in store      |\n");
         printf("|   2. Sell your items          |\n");
@@ -37,7 +37,7 @@ void go_to_shop(Player* player)
                 // Avoid buying more than can carry
                 if (item_count >= MAX_ITEMS)
                 {
-                    npc_dialog("Your pockets are already full ! Come back later !\" says vendor Na.\n", 20);
+                    npc_dialog("\"Your pockets are already full ! Come back later !\" says vendor Na.\n", 20);
                     break;
                 }
 
@@ -69,7 +69,7 @@ void go_to_shop(Player* player)
                     printf("You bought 1 %s for %d Supcoins.", catalog[buy_option - 1]->name, catalog[buy_option - 1]->price);
 
                     break;
-                } else npc_dialog("You don't have enough Supcoins for this. Come back when you have more !\" says vendor Na.\n", 20); break; // Player doesn't have enough coins
+                } else npc_dialog("\"You don't have enough Supcoins for this. Come back when you have more !\" says vendor Na.\n", 20); break; // Player doesn't have enough coins
 
                 return; // Something went wrong, leave shop
             }
@@ -77,7 +77,7 @@ void go_to_shop(Player* player)
             {
                 if (item_count == 0)
                 {
-                    npc_dialog("You don't have any item to sell ! Come back later !\" says vendor Na.\n", 20);
+                    npc_dialog("\"You don't have any item to sell ! Come back later !\" says vendor Na.\n", 20);
                     break;
                 }
 

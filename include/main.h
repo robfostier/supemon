@@ -4,6 +4,8 @@
 
 Player start_game(void);
 
-void chose_action(Player* player);
-
-void go_to_center(Player* player);
+/**
+ * Chose an action.
+ * Returns 0 if player leaves the game, 1 otherwise.
+ */
+int chose_action(Player* player);

@@ -19,7 +19,10 @@ int main(void)
 
     Player player = start_game();
 
-    chose_action(&player);
+    while(1)
+    {
+        if (chose_action(&player) == 0) break;
+    }
 
     return 0;
 }
@@ -99,7 +102,7 @@ Player start_game(void)
     return player;
 }
 
-void chose_action(Player* player)
+int chose_action(Player* player)
 {
     printf("+-------------------------------+\n");
     printf("| Where do you want to go now ? |\n");
@@ -122,15 +125,17 @@ void chose_action(Player* player)
     {
         case 1:
             go_to_battle(player);
-            break;
+            return 1;
         case 2:
             go_to_shop(player);
-            break;
+            return 1;
         case 3:
             go_to_center(player);
-            break;
+            return 1;
         case 4:
-            // TO DO
-            break; 
+            return 0;
+        default: break;
     }
+
+    return 0; // Something went wrong, leave game
 }
