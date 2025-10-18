@@ -7,12 +7,12 @@
 void go_to_center(Player* player)
 {
     clear_terminal();
-    npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n", 20);
+    npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n\n", 20);
 
     // Boucle pour rester dans le centre jusqu'à ce que le joueur parte
     while (1)
     {
-        printf("\n+------------------------------+\n");
+        printf("+------------------------------+\n");
         printf("| What do you wish to do ?     |\n");
         printf("|   1. Heal all Supemons       |\n");
         printf("|   2. Change active Supemon   |\n");
@@ -60,25 +60,23 @@ void go_to_center(Player* player)
                     printf("YOUR CHOICE: ");
                     scanf("%d", &chosen);
                 }
-
                 printf("\n");
 
-                // Si le joueur annule
-                if (chosen == supemon_count + 1) break;
+                if (chosen == supemon_count + 1) break; // On cancel
 
-                // Changer le Supémon actif (index - 1 car tableau commence à 0)
-                set_active_supemon(player, chosen - 1);
-
-                // Confirmation
-                printf("Active Supemon changed to %s !\n\n", player->supemons[chosen - 1].name);
+                if (player->active_index != chosen - 1)
+                {
+                    set_active_supemon(player, chosen - 1);
+                    printf("Active Supemon changed to %s !\n\n", get_active_supemon(player)->name);
+                }
+                else
+                {
+                    printf("%s is already your active Supemon.\n\n", get_active_supemon(player)->name);
+                }
 
                 break;
             }
-            case 3:  // Leave the Center
-            {
-                npc_dialog("\"See you next time !\" says nurse Ornella.\n\n", 20);
-                return;  // Quitter la fonction et la boucle
-            }
+            case 3: return;
             default: break;
         }
     }
