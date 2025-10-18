@@ -6,6 +6,7 @@
 
 void go_to_center(Player* player)
 {
+    clear_terminal();
     npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n", 20);
 
     // Boucle pour rester dans le centre jusqu'à ce que le joueur parte
@@ -63,11 +64,7 @@ void go_to_center(Player* player)
                 printf("\n");
 
                 // Si le joueur annule
-                if (chosen == supemon_count + 1)
-                {
-                    printf("Action cancelled.\n\n");
-                    break;
-                }
+                if (chosen == supemon_count + 1) break;
 
                 // Changer le Supémon actif (index - 1 car tableau commence à 0)
                 set_active_supemon(player, chosen - 1);
