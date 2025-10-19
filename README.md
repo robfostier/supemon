@@ -5,7 +5,6 @@
 ---
 ## User documentation
 
----
 ### Getting started
 
 #### Prerequisites
@@ -61,7 +60,6 @@ bin/saves/supemon_save.txt
 ---
 ## Technical documentation
 
----
 ### Project architecture
 
 #### Directory structure
