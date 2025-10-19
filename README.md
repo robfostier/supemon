@@ -43,10 +43,7 @@ make
 
 #### Save files
 
-Saves are stored under :
-```bash
-bin/saves/supemon_save.txt
-```
+Saves are stored under `bin/saves/supemon_save.txt`.
 
 ---
 ## Technical documentation
@@ -236,12 +233,12 @@ Every Item pointer stored by Player points to the address of one of these refere
 #define BOX_WIDTH       30 // number of writable chars in print box
 ```
 
-These macros are used throughout the code to maintain coherence. They are self explanatory.
+These macros are defined in `global.h` and used throughout the code to maintain coherence. They are self explanatory.
 
-#### Specific constants
+#### Static constants
 
 ```c
 #define BATTLE_ITEM_LIMIT 4
 ```
 
-This macro is used in battle.c to ensure that the Player doesn't use more than 4 Items in a single battle.
+This macro is defined in `battle.c` to ensure that the Player doesn't use more than 4 Items in a single battle.
