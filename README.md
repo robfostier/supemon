@@ -12,7 +12,6 @@
 Make sure you have the following installed :
 - `gcc`
 - `make`
-- Linux, MacOS or Windows
 
 To check if you have them installed :
 
@@ -20,6 +19,8 @@ To check if you have them installed :
 gcc --version
 make --version
 ```
+
+You will also need Linux, MacOS or Windows.
 
 #### Build instructions
 
@@ -37,18 +38,8 @@ make
 ```
 
 3. Run the executable
-
-    - on Windows :
-
-    ```bash
-    ./bin/supemon.exe
-    ```
-
-    - on Linux :
-
-    ```bash
-    ./bin/supemon
-    ```
+    - on Windows : `./bin/supemon.exe`
+    - on Linux : `./bin/supemon`
 
 #### Save files
 
