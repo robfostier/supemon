@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <sys/stat.h>
 #include "main.h"
 #include "global.h"
 #include "utils.h"
@@ -11,12 +11,20 @@
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
-
+  
 int main(void)
 {
     // SET SEED
     srand(time(NULL));
     clear_terminal();
+
+    // Create saves directory if it doesn't exist
+    #ifdef _WIN32
+        system("if not exist bin\\saves mkdir bin\\saves");
+    #else
+        mkdir("bin", 0755);
+        mkdir(SAVE_DIR, 0755);
+    #endif
 
     Player player = start_game();
 
