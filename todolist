@@ -35,10 +35,9 @@ Bug détectés
 
 
 # SAVE/LOAD :
-- qu'est-ce qu'il se passe si j'altere un fichier save avec valeur d'xp supérieure au cap pour passer un niveau ? solution : au loading tu set pas directement l'xp, tu la passes dans fonction gain_expérience. évidemment, faire ça apres avoir load tout le supemon
-- pareil si HP > Max_HP ? besoin de borner HP entre 0 et max_health
-- pas besoin de save les stats attack, def, accuracy et evasion. elles sont toujours égales à 0 hors combat. dans le loading, les set à 0 automatiquement
 - solution id bizarre pour load items, ça oblige de modifier la fonction de save si on ajoute des items. possible de faire plus modulaire ?
+- gérer multiple saves, donner nom à save dans fonction save, demander nom au loading
+- ranger saves (dans bin/saves ?)
 
 
 

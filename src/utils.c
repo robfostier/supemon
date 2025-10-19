@@ -34,4 +34,8 @@ void clear_terminal(void)
     #else
         system("clear");
     #endif
+    
+    printf("+------------------------------+\n");
+    printf("|         Supemon -CLI         |\n");
+    printf("+------------------------------+\n\n");
 }

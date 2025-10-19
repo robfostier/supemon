@@ -34,7 +34,7 @@ Player start_game(void)
   Player player;
 
       printf("+------------------------------+\n");
-      printf("|      SUPEMON WORLD           |\n");
+      printf("|     Welcome to Supemon !     |\n");
       printf("+------------------------------+\n");
       printf("| 1. New Game                  |\n");
       printf("| 2. Load Game                 |\n");
@@ -171,7 +171,7 @@ int chose_action(Player* player)
             return 1;
         case 4:
             {
-                printf("\n+------------------------------+\n");
+                printf("+------------------------------+\n");
                 printf("| Do you want to save ?        |\n");
                 printf("|   1. Save and quit           |\n");
                 printf("|   2. Quit without saving     |\n");
