@@ -1,9 +1,8 @@
 # FIX BUG OVERFLOW NOM DE JOUEUR
-# IMPLEMENTER SAVES/LOADING
 # GESTION DES ERREURS
 # IMPLEMENTER COULEURS
 # SAVE/LOAD :
-- solution id bizarre pour load items, ça oblige de modifier la fonction de save si on ajoute des items. possible de faire plus modulaire ?
+- solution id bizarre pour load items, ça oblige de modifier la fonction de save si on ajoute des items. possible de faire plus modulaire ? (possiblement stocker item_id dans struct item)
 - gérer multiple saves, donner nom à save dans fonction save, demander nom au loading
 - ranger saves (dans bin/saves ?)
 
