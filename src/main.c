@@ -170,7 +170,39 @@ int chose_action(Player* player)
             go_to_center(player);
             return 1;
         case 4:
-            return 0;
+            {
+                printf("\n+------------------------------+\n");
+                printf("| Do you want to save ?        |\n");
+                printf("|   1. Save and quit           |\n");
+                printf("|   2. Quit without saving     |\n");
+                printf("|   3. Cancel                  |\n");
+                printf("+------------------------------+\n");
+
+                int save_choice = 0;
+                while (save_choice < 1 || save_choice > 3)
+                {
+                    printf("\nYOUR CHOICE (1, 2 or 3): ");
+                    if (scanf("%d", &save_choice) != 1)
+                    {
+                        while (getchar() != '\n');
+                        save_choice = 0;
+                    }
+                }
+
+                if (save_choice == 1)
+                {
+                    save_game(player);
+                    return 0;
+                }
+                else if (save_choice == 2)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1; // Continue playing
+                }
+            }
         default: break;
     }
 
