@@ -194,9 +194,9 @@ Three ItemTypes are implemented in the game : `ITEM_POTION`, `ITEM_SUPER_POTION`
 #### Supemons
 
 Three Supemons are defined as constants in this game :
-- `Supmander`
-- `Supasaur`
-- `Supirtle`
+- `SUPMANDER`
+- `SUPASAUR`
+- `SUPIRTLE`
 
 When initializing a random Supemon in battle, these level 1 templates are referenced and the program makes a deepcopy of these Supemons in the stack.
 When adding a Supemon to the Player's team, these deepcopies are stored in heap.
@@ -204,20 +204,20 @@ When adding a Supemon to the Player's team, these deepcopies are stored in heap.
 #### Moves
 
 Five Moves are defined as constants in this game :
-- `Scratch`
-- `Growl`
-- `Pound`
-- `Foliage`
-- `Shell`
+- `SCRATCH`
+- `GROWL`
+- `POUND`
+- `FOLIAGE`
+- `SHELL`
 
 Every Move pointer stored by Supemons points to the address of one of these reference. That way, we only define the Moves once and they can never be tempered with.
 
 #### Items
 
 Three Items are defined as constants in this game :
-- `Potion`
-- `Super Potion`
-- `Rare Candy`
+- `POTION`
+- `SUPER_POTION`
+- `RARE_CANDY`
 
 Every Item pointer stored by Player points to the address of one of these reference. That way, we only define the Items once and they can never be tempered with.
 
