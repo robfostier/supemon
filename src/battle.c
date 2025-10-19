@@ -47,14 +47,14 @@ int go_to_battle(Player* player)
         else printf("Enemy %s will attack first!\n\n", foe.name);
     }
 
-    int item_count = 0;
+    int used_item_count = 0;
 
     while (1)
     {
         if (player_first)
         {
             // Player goes first
-            int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
+            int turn_result = player_turn(player, &foe, used_item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
             if (turn_result == 1)
             {
                 leave_battle(player);
@@ -62,7 +62,8 @@ int go_to_battle(Player* player)
             }
             else if (turn_result == 2) // If an item was used, player gets another turn
             {
-                if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
+                used_item_count++;
+                if (player_turn(player, &foe, BATTLE_ITEM_LIMIT + 1) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
                 {
                     leave_battle(player);
                     return 1;
@@ -84,7 +85,7 @@ int go_to_battle(Player* player)
                 return 1;
             }
             
-            int turn_result = player_turn(player, &foe, item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
+            int turn_result = player_turn(player, &foe, used_item_count); // 0 if battle still ongoing, 1 if turn ends battle, 2 if player used an item
             if (turn_result == 1)
             {
                 leave_battle(player);
@@ -92,7 +93,8 @@ int go_to_battle(Player* player)
             }
             else if (turn_result == 2) // If an item was used, player gets another turn
             {
-                if (player_turn(player, &foe, 5) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
+                used_item_count++;
+                if (player_turn(player, &foe, BATTLE_ITEM_LIMIT + 1) == 1) // Player can't use 2 items in a single turn, so we pass 5 for item_count
                 {
                     leave_battle(player);
                     return 1;
@@ -206,10 +208,10 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
         }
         case 3:
         {
-            if (used_item_count < 4) // Can only use item if hasn't already used 4 during battle
+            if (used_item_count < BATTLE_ITEM_LIMIT) // Can only use item if hasn't already used 4 during battle
             {
                 int item_count = display_items(player); // display_items() also returns the count, better than just get_item_count() here
-                printf("%d - Cancel\n\n", item_count +1);
+                printf("%d - Cancel\n\n", item_count + 1);
 
                 int chosen_item = 0;
                 while (chosen_item < 1 || chosen_item > item_count + 1)
@@ -223,12 +225,11 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
 
                 if (use_item(player, active, chosen_item - 1) == 0) return 0; // Something went wrong, end turn
 
-                used_item_count++;
                 return 2; // Player used item, can play one more turn
             }
             else
             {
-                printf("Can't use item !\n\n");
+                printf("Can't use item !\n");
                 break; // Player can't use item, abort turn
             }
         }

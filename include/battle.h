@@ -4,6 +4,8 @@
 #include "supemon.h"
 #include "moves.h"
 
+#define BATTLE_ITEM_LIMIT 4
+
 int go_to_battle(Player* player);
 void display_battle(Player* player, Supemon* foe);
 void battle_rewards(Player* player, Supemon* foe);
