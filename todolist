@@ -2,3 +2,39 @@
 # IMPLEMENTER SAVES/LOADING
 # GESTION DES ERREURS
 # IMPLEMENTER COULEURS
+
+Bug détectés 
+
+ Fichier include/battle.h :
+  - Ligne 15 : int used_item_count → int* used_item_count  // on met le used_item_count en pointeur 
+
+ Fichier src/battle.c :
+  - ligne bug -> solution proposée 
+  - Ligne 57 : item_count → &item_count -> notre code actuel permet à un joueur d'utiliser plus d'items que ce dont il a le droit > Copie OK mais valeur réel pas sauvegardé
+
+  - Lignes 65-69 : Créer variable int max_items = 5; et passer &max_items
+        1. On ne peut pas faire &5 en C car 5 est une constante, donc on crée une variable int max_items = 5; pour
+            pouvoir passer son adresse &max_items.
+        
+        2. utilisation possible dans le code: 
+                    else if (turn_result == 2) // Si le joueur a utilisé un item
+                {
+                    int max_items = 5;  // ✅ Créer une variable temporaire
+                    if (player_turn(player, &foe, &max_items) == 1)  // ✅ Passer son adresse
+                    {
+                        leave_battle(player);
+                        return 1;
+                    }
+                }
+
+  - Ligne 87 : item_count → &item_count
+  - Lignes 93-100 : Créer variable int max_items = 5; et passer &max_items
+  - Ligne 126 : int used_item_count → int* used_item_count
+  - Ligne 209 : used_item_count → *used_item_count
+  - Ligne 226 : used_item_count++ → (*used_item_count)++
+
+  Je te laisse jeter un coup d'oeil avant de passer à l'optimisation des couleurs 
+
+
+
+
