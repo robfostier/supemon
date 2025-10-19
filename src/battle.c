@@ -334,11 +334,11 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
                     if ((float)rand() / RAND_MAX >= .5f) dmg += 1.0f;
                 }
 
-                float dodge_rate = a_acc / (a_acc + t_eva) + .1f;
+                float success_rate = a_acc / (a_acc + t_eva) + .1f;
 
-                //printf("%f atk, %f def, %f acc, %f eva, %f dmg", a_atk, t_def, a_acc, t_eva, dmg);
+                //printf("%f a_acc / (%f a_acc + %f t_acc) + 0,1 = %f\n", a_acc, a_acc, t_eva, success_rate);
 
-                if ((float)rand() / RAND_MAX > dodge_rate)
+                if ((float)rand() / RAND_MAX <= success_rate)
                 {
                     update_health(target, -(int)dmg);
                     printf("%s used %s. %s takes %d damage.\n", attacker->name, move->name, target->name, (int)dmg);
