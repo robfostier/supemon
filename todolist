@@ -5,6 +5,13 @@
 - solution id bizarre pour load items, ça oblige de modifier la fonction de save si on ajoute des items. possible de faire plus modulaire ? (possiblement stocker item_id dans struct item)
 - gérer multiple saves, donner nom à save dans fonction save, demander nom au loading
 - ranger saves (dans bin/saves ?)
+# README
+- USER DOC
+    - About The Project (projet d'etude, supinfo, blablabla)
+    - Game Rules (voir le brief)
+- TECHICAL DOC
+    - Source code files and headers (.c, .h, à quoi servent les fonctions)
+    - Game Loop
 
 
 

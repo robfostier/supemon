@@ -111,11 +111,11 @@ typedef struct {
 ```
 
 This structure contains all data associated with the Player:
-1. name is a char array of size 12 + 1 for '\0'. It stores the name of the Player.
-2. supemons is a Supemon array of size 6. This is where captured Supemons live in memory. The empty slots memory addresses are filled with 0s. Checking for empty slots is done by looking for any Supemon with level equal to 0.
-3. active_index is an integer that allows us to keep track of the current active Supemon.
-4. coins is a positive integer that keeps track of the Player's wallet. The Player cannot have debt.
-5. items[] is an const Item pointer array of size 20. It stores one pointer per each item in the Player's collection. They point to one of the three const Item defined in items.c.
+1. `name` is a char array of size 12 + 1 for '\0'. It stores the name of the Player.
+2. `supemons` is a Supemon array of size 6. This is where captured Supemons live in memory. The empty slots memory addresses are filled with 0s. Checking for empty slots is done by looking for any Supemon with level equal to 0.
+3. `active_index` is an integer that allows us to keep track of the current active Supemon.
+4. `coins` is a positive integer that keeps track of the Player's wallet. The Player cannot have debt.
+5. `items` is an const Item pointer array of size 20. It stores one pointer per each item in the Player's collection. They point to one of the three const Item defined in `items.c`.
 
 #### Supemon
 
@@ -135,10 +135,10 @@ This structure contains all data associated with the Player:
 ```
 
 This structure contains all data associated with Supemons:
-1. name is a char array of size 12 + 1 for '\0'. It stores the name of the Supemon.
-2. level and experience are positive integers for keeping track of the Supemon current level.
-3. 11 integers are used to store the Supemon statistics. attack, defense, accuracy and evasion are always equal to 0 outside battles. health cannot be greater than max_health.
-4. moves is a const Move pointer array of size 4. It stores one pointer per move known by the Supemon. If the Supemon doesn't know 4 moves, the remaining slots store NULL.
+1. `name` is a char array of size 12 + 1 for '\0'. It stores the name of the Supemon.
+2. `level` and `experience` are positive integers for keeping track of the Supemon current level.
+3. 11 integers are used to store the Supemon statistics. `attack`, `defense`, `accuracy` and `evasion` are always equal to 0 outside battles. `health` cannot be greater than `max_health`.
+4. `moves` is a const Move pointer array of size 4. It stores one pointer per move known by the Supemon. If the Supemon doesn't know 4 moves, the remaining slots store `NULL`.
 
 #### Move
 
@@ -159,11 +159,11 @@ This structure contains all data associated with Supemons:
 ```
 
 This structure contains all data associated with Moves:
-1. name is a char array of size 12 + 1 for '\0'. It stores the name of the Move.
-2. damage is an integer that stores the damage/heal/buff/debuff value associated with the Move.
-3. type is a MoveType that specifies the effect of the Move. 
-    - MOVE_OFFENSIVE represents Moves that deal damage to the target - when positive -, or heal the launcher - when negative -.
-    - MOVE_ATTACK, MOVE_DEFENSE, MOVE_EVASION and MOVE_ACCURACY represent Moves that buff the launcher - when positive -, or debuff the target - when negative -.
+1. `name` is a char array of size 12 + 1 for '\0'. It stores the name of the Move.
+2. `damage` is an integer that stores the damage/heal/buff/debuff value associated with the Move.
+3. `type` is a MoveType that specifies the effect of the Move. 
+    - `MOVE_OFFENSIVE` represents Moves that deal damage to the target - when positive -, or heal the launcher - when negative -.
+    - `MOVE_ATTACK`, `MOVE_DEFENSE`, `MOVE_EVASION` and `MOVE_ACCURACY` represent Moves that buff the launcher - when positive -, or debuff the target - when negative -.
 
 #### Item
 
@@ -182,11 +182,11 @@ This structure contains all data associated with Moves:
 ```
 
 This structure contains all data associated with Items:
-1. name is a char array of size 12 + 1 for '\0'. It stores the name of the Item.
-2. price is a positive integer that stores the buying price of the Item in the shop.
-3. type is an ItemType that specifies the effect of the Item. 
+1. `name` is a char array of size 12 + 1 for '\0'. It stores the name of the Item.
+2. `price` is a positive integer that stores the buying price of the Item in the shop.
+3. `type` is an ItemType that specifies the effect of the Item. 
 
-Three ItemTypes are implemented in the game : ITEM_POTION, ITEM_SUPER_POTION and ITEM_RARE_CANDY. 
+Three ItemTypes are implemented in the game : `ITEM_POTION`, `ITEM_SUPER_POTION` and `ITEM_RARE_CANDY`. 
 
 ---
 ### Constants
@@ -194,9 +194,9 @@ Three ItemTypes are implemented in the game : ITEM_POTION, ITEM_SUPER_POTION and
 #### Supemons
 
 Three Supemons are defined as constants in this game :
-- Supmander
-- Supasaur
-- Supirtle
+- `Supmander`
+- `Supasaur`
+- `Supirtle`
 
 When initializing a random Supemon in battle, these level 1 templates are referenced and the program makes a deepcopy of these Supemons in the stack.
 When adding a Supemon to the Player's team, these deepcopies are stored in heap.
@@ -204,20 +204,20 @@ When adding a Supemon to the Player's team, these deepcopies are stored in heap.
 #### Moves
 
 Five Moves are defined as constants in this game :
-- Scratch
-- Growl
-- Pound
-- Foliage
-- Shell
+- `Scratch`
+- `Growl`
+- `Pound`
+- `Foliage`
+- `Shell`
 
 Every Move pointer stored by Supemons points to the address of one of these reference. That way, we only define the Moves once and they can never be tempered with.
 
 #### Items
 
 Three Items are defined as constants in this game :
-- Potion
-- Super Potion
-- Rare Candy
+- `Potion`
+- `Super Potion`
+- `Rare Candy`
 
 Every Item pointer stored by Player points to the address of one of these reference. That way, we only define the Items once and they can never be tempered with.
 
