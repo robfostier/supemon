@@ -36,6 +36,7 @@ void increase_stat(int* stat, float mult);
 void gain_experience(Supemon* supemon, unsigned int xp);
 unsigned int xp_to_next_level(unsigned int current_level);
 void update_health(Supemon* supemon, int value);
+int get_battle_stat(Supemon* supemon, char stat);
 
 /**
  * Return a random Supemon* template.
