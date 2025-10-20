@@ -140,14 +140,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
     printf("|   5. Run away                |\n");
     printf("+------------------------------+\n\n");
 
-    int choice = 0;
-    while (choice < 1 || choice > 5)
-    {
-        printf("YOUR CHOICE (1, 2, 3, 4 or 5): ");
-        scanf("%d", &choice);
-    }
-
-    printf("\n");
+    int choice = get_input_counted(1, 5);
 
     Supemon* active = get_active_supemon(player);
 
@@ -167,18 +160,12 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             printf("%d - Cancel\n\n", move_count + 1);
 
             // Player selects a move
-            int chosen_move = 0;
-            while (chosen_move < 1 || chosen_move > move_count + 1)
-            {
-                printf("YOUR CHOICE: ");
-                scanf("%d", &chosen_move);
-            }
-            printf("\n");
+            int move_choice = get_input_counted(1, move_count + 1);
 
-            if (chosen_move == move_count + 1) break; // Player cancelled move, needs to abort turn
+            if (move_choice == move_count + 1) break; // Player cancelled move, needs to abort turn
 
             // Apply the move
-            apply_move(active->moves[chosen_move - 1], active, foe);
+            apply_move(active->moves[move_choice - 1], active, foe);
 
             if (foe->health > 0) return 0; // Battle can continue
 
@@ -192,17 +179,11 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             int supemon_count = display_supemons(player);
             printf("%d - Cancel\n\n", supemon_count + 1);
 
-            int chosen_mon = 0;
-            while (chosen_mon < 1 || chosen_mon > supemon_count + 1)
-            {
-                printf("YOUR CHOICE: ");
-                scanf("%d", &chosen_mon);
-            }
-            printf("\n");
+            int mon_choice = get_input_counted(1, supemon_count + 1);
 
-            if (chosen_mon == supemon_count + 1) break; // Player cancelled action, needs to abort turn
+            if (mon_choice == supemon_count + 1) break; // Player cancelled action, needs to abort turn
 
-            set_active_supemon(player, chosen_mon - 1);
+            set_active_supemon(player, mon_choice - 1);
 
             return 0; // Player switched Supemon, battle can continue
         }
@@ -213,17 +194,11 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
                 int item_count = display_items(player); // display_items() also returns the count, better than just get_item_count() here
                 printf("%d - Cancel\n\n", item_count + 1);
 
-                int chosen_item = 0;
-                while (chosen_item < 1 || chosen_item > item_count + 1)
-                {
-                    printf("YOUR CHOICE: ");
-                    scanf("%d", &chosen_item);
-                }
-                printf("\n");
+                int item_choice = get_input_counted(1, item_count + 1);
 
-                if (chosen_item == item_count + 1) break; // Player cancelled action, needs to abort turn
+                if (item_choice == item_count + 1) break; // Player cancelled action, needs to abort turn
 
-                if (use_item(player, active, chosen_item - 1) == 0) return 0; // Something went wrong, end turn
+                if (use_item(player, active, item_choice - 1) == 0) return 0; // Something went wrong, end turn
 
                 return 2; // Player used item, can play one more turn
             }

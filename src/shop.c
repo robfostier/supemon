@@ -24,14 +24,7 @@ void go_to_shop(Player* player)
         printf("|   3. Leave the Mart          |\n");
         printf("+----------------[%4d Supcoins]\n", player->coins);
 
-        int choice = 0;
-        while (choice < 1 || choice > 3)
-        {
-            printf("\nYOUR CHOICE (1, 2 or 3): ");
-            scanf("%d", &choice);
-        }
-
-        printf("\n");
+        int choice = get_input_counted(1, 3);
 
         switch (choice)
         {
@@ -63,14 +56,7 @@ void go_to_shop(Player* player)
                 printf("|%3d. Cancel                   |\n", catalog_count + 1);
                 printf("+----------------[%4d Supcoins]\n", player->coins);
 
-                int buy_option = 0;
-                while (buy_option < 1 || buy_option > catalog_count + 1)
-                {
-                    printf("\nYOUR CHOICE: ");
-                    scanf("%d", &buy_option);
-                }
-
-                printf("\n");
+                int buy_option = get_input_counted(1, catalog_count + 1);
 
                 if (buy_option == catalog_count + 1) break; // Player choose to cancel
                 
@@ -113,14 +99,7 @@ void go_to_shop(Player* player)
                 printf("|%3d. Cancel                   |\n", item_count + 1);
                 printf("+----------------[%4d Supcoins]\n", player->coins);
 
-                int sell_option = 0;
-                while (sell_option < 1 || sell_option > item_count + 1)
-                {
-                    printf("\nYOUR CHOICE: ");
-                    scanf("%d", &sell_option);
-                }
-
-                printf("\n");
+                int sell_option = get_input_counted(1, item_count + 1);
 
                 if (sell_option == item_count + 1) break; // Player choose to cancel
 
