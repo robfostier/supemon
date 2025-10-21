@@ -3,11 +3,14 @@
 #include "center.h"
 #include "player.h"
 #include "utils.h"
+#include "colors.h"
 
 void go_to_center(Player* player)
 {
     clear_terminal();
+    printf("%s", COLOR_NPC);
     npc_dialog("\"Welcome to the Supemon Center ! We heal your Supemon for free !\" says nurse Ornella.\n\n", 20);
+    printf("%s", RESET);
 
     // Boucle pour rester dans le centre jusqu'à ce que le joueur parte
     while (1)
@@ -19,12 +22,7 @@ void go_to_center(Player* player)
         printf("|   3. Leave the Center        |\n");
         printf("+------------------------------+\n");
 
-        int choice = 0;
-        while (choice < 1 || choice > 3)
-        {
-            printf("\nYOUR CHOICE (1, 2 or 3): ");
-            scanf("%d", &choice);
-        }
+        int choice = get_input_counted(1, 3);
 
         printf("\n");
 
@@ -45,7 +43,9 @@ void go_to_center(Player* player)
                 // Message de confirmation
                 npc_dialog("...", 500);
                 printf("\n\n");
+                printf("%s", COLOR_NPC);
                 npc_dialog("\"Your Supemons have been fully healed ! Come back anytime !\" says nurse Ornella.\n\n", 20);
+                printf("%s", RESET);
 
                 break;
             }
@@ -55,25 +55,18 @@ void go_to_center(Player* player)
                 int supemon_count = display_supemons(player);
                 printf("%d - Cancel\n\n", supemon_count + 1);
 
-                // Demander au joueur de choisir
-                int chosen = 0;
-                while (chosen < 1 || chosen > supemon_count + 1)
-                {
-                    printf("YOUR CHOICE: ");
-                    scanf("%d", &chosen);
-                }
-                printf("\n");
+                int active_choice = get_input_counted(1, supemon_count + 1);
 
-                if (chosen == supemon_count + 1) break; // On cancel
+                if (active_choice == supemon_count + 1) break; // On cancel
 
-                if (player->active_index != chosen - 1)
+                if (player->active_index != active_choice - 1)
                 {
-                    set_active_supemon(player, chosen - 1);
-                    printf("Active Supemon changed to %s !\n\n", get_active_supemon(player)->name);
+                    set_active_supemon(player, active_choice - 1);
+                    printf("%sActive Supemon changed to %s%s%s!%s\n\n", COLOR_SUCCESS, BOLD, get_active_supemon(player)->name, RESET COLOR_SUCCESS, RESET);
                 }
                 else
                 {
-                    printf("%s is already your active Supemon.\n\n", get_active_supemon(player)->name);
+                    printf("%s%s%s is already your active Supemon.%s\n\n", COLOR_INFO, get_active_supemon(player)->name, RESET COLOR_INFO, RESET);
                 }
 
                 break;

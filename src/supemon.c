@@ -5,6 +5,8 @@
 
 #include "supemon.h"
 #include "moves.h"
+#include "colors.h"
+#include "utils.h"
 
 const Supemon SUPMANDER = {
     .name = "Supmander",
@@ -148,50 +150,77 @@ const Supemon* get_random_supemon_template()
 
 void display_supemon(Supemon* supemon, char player_name[])
 {
-    // HP
-    int hp_len = 5 + snprintf(NULL, 0, "%d", supemon->health) + snprintf(NULL, 0, "%d", supemon->max_health); // " [" + "/" + "] "
-    int hp_spaces = BOX_WIDTH - hp_len;
+    // Déterminer la couleur du nom selon le joueur (vert pour joueur, rouge pour ennemi)
+    const char* name_color = (strcmp(player_name, "enemy") == 0) ? COLOR_ENEMY : COLOR_PLAYER;
 
+    // Calculer la couleur HP selon le pourcentage
+    float hp_percent = (float)supemon->health / (float)supemon->max_health;
+    const char* hp_color;
+    if (hp_percent > 0.5)
+        hp_color = COLOR_HP;
+    else if (hp_percent > 0.2)
+        hp_color = COLOR_HP_LOW;
+    else
+        hp_color = COLOR_HP_CRITICAL;
+
+    // HP BAR (ligne du haut) - Bordures blanches
+    int hp_len = 5 + snprintf(NULL, 0, "%d", supemon->health) + snprintf(NULL, 0, "%d", supemon->max_health);
+    int hp_spaces = BOX_WIDTH - hp_len;
     if (hp_spaces < 0) hp_spaces = 0;
 
     printf("+");
     for (int i = 0; i < hp_spaces; i++) printf("-");
-    printf("-[%d/%d]-+\n", supemon->health, supemon->max_health);
+    printf("%s-[%d/%d]%s-+\n", hp_color, supemon->health, supemon->max_health, RESET);
 
-    // NAME
-    int name_len = strlen(supemon->name) + strlen(player_name) + 4; // " Supemon (player)"
+    // NAME - Bordures blanches, nom coloré
+    int name_len = strlen(supemon->name) + strlen(player_name) + 4;
     int name_spaces = BOX_WIDTH - name_len;
-
     if (name_spaces < 0) name_spaces = 0;
-    printf("| %s (%s)%*s|\n", supemon->name, player_name, name_spaces, "");
-    
-    // LVL + XP BAR
-    int lvl_len = 10 + snprintf(NULL, 0, "%d", supemon->level); // " [" + progress bar + "] Lvl. {lvl} "
-    int xp_bar_len = BOX_WIDTH - lvl_len;
 
-    if (xp_bar_len < 0) xp_bar_len = 0; // Avoid bugs
+    printf("| ");
+    printf("%s%s%s%s", name_color, BOLD, supemon->name, RESET);
+    printf(" (%s)%*s|\n", player_name, name_spaces, "");
+
+    // LVL + XP BAR - Bordures blanches
+    int lvl_len = 10 + snprintf(NULL, 0, "%d", supemon->level);
+    int xp_bar_len = BOX_WIDTH - lvl_len;
+    if (xp_bar_len < 0) xp_bar_len = 0;
 
     float xp_ratio = (float)supemon->experience / xp_to_next_level(supemon->level);
     if (xp_ratio > 1.0f) xp_ratio = 1.0f;
     if (xp_ratio < 0.0f) xp_ratio = 0.0f;
     int progress = (int)(xp_ratio * xp_bar_len);
 
-    char xp_bar[BOX_WIDTH - 10]; // maximum size
-
+    printf("| Lvl. %s%d%s %s[", BOLD, supemon->level, RESET, COLOR_XP);
     for (int i = 0; i < xp_bar_len; i++)
     {
-        if (i < progress) xp_bar[i] = '#';
-        else xp_bar[i] = '-';
+        if (i < progress) printf("#");
+        else printf("-");
     }
+    printf("]%s |\n", RESET);
 
-    xp_bar[xp_bar_len] = '\0';
-
-    printf("| Lvl. %d [%s] |\n", supemon->level, xp_bar);
-    
+    // Ligne de séparation
     printf("+------------------------------+\n");
 
-    // STATS BOX
-    printf("| Atk: %-3d            Def: %-3d |\n", supemon->attack + supemon->base_attack, supemon->defense + supemon->base_defense);
-    printf("| Acc: %-3d            Eva: %-3d |\n", supemon->accuracy + supemon->base_accuracy, supemon->evasion + supemon->base_evasion);
+    // STATS BOX - Stats colorées selon buffs/debuffs
+    int total_atk = supemon->attack + supemon->base_attack;
+    int total_def = supemon->defense + supemon->base_defense;
+    int total_acc = supemon->accuracy + supemon->base_accuracy;
+    int total_eva = supemon->evasion + supemon->base_evasion;
+
+    // Déterminer les couleurs selon les buffs/debuffs
+    const char* atk_color = (supemon->attack > 0) ? COLOR_STAT_UP : (supemon->attack < 0) ? COLOR_STAT_DOWN : "";
+    const char* def_color = (supemon->defense > 0) ? COLOR_STAT_UP : (supemon->defense < 0) ? COLOR_STAT_DOWN : "";
+    const char* acc_color = (supemon->accuracy > 0) ? COLOR_STAT_UP : (supemon->accuracy < 0) ? COLOR_STAT_DOWN : "";
+    const char* eva_color = (supemon->evasion > 0) ? COLOR_STAT_UP : (supemon->evasion < 0) ? COLOR_STAT_DOWN : "";
+
+    printf("| Atk: %s%-3d%s            Def: %s%-3d%s |\n",
+           atk_color, total_atk, RESET,
+           def_color, total_def, RESET);
+
+    printf("| Acc: %s%-3d%s            Eva: %s%-3d%s |\n",
+           acc_color, total_acc, RESET,
+           eva_color, total_eva, RESET);
+
     printf("+------------------------------+\n\n");
 }

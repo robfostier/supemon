@@ -5,6 +5,7 @@
 #include "player.h"
 #include "supemon.h"
 #include "items.h"
+#include "colors.h"
 
 void init_player(Player* player, const char* name, Supemon starter)
 {
@@ -58,7 +59,8 @@ int display_supemons(Player* player)
         Supemon* current = &player->supemons[i];
         if (current->level == 0) break; // Found an empty slot
 
-        printf("%d - %s\n", i + 1, current->name);
+        // Afficher le numéro et le nom coloré
+        printf("%d - %s%s%s\n", i + 1, COLOR_PLAYER, current->name, RESET);
         display_supemon(current, player->name);
     }
     return i;
@@ -75,7 +77,21 @@ int display_items(Player* player)
         const Item* current = player->items[i];
         if (current == NULL) break; // Found an empty slot
 
-        printf("%d - %s\n", i + 1, current->name);
+        // Colorier l'item selon son type
+        const char* item_color;
+        switch(current->type) {
+            case ITEM_POTION:
+            case ITEM_SUPER_POTION:
+                item_color = COLOR_HEAL;
+                break;
+            case ITEM_RARE_CANDY:
+                item_color = COLOR_XP;
+                break;
+            default:
+                item_color = COLOR_ITEM;
+        }
+
+        printf("%d - %s%s%s\n", i + 1, item_color, current->name, RESET);
     }
 
     return i;
