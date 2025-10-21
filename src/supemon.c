@@ -224,3 +224,33 @@ void display_supemon(Supemon* supemon, char player_name[])
 
     printf("+------------------------------+\n\n");
 }
+
+int get_battle_stat(Supemon* supemon, char stat)
+{
+    int battle_stat;
+
+    switch(stat)
+    {
+        case 'A':
+            battle_stat = supemon->base_attack + supemon->attack;
+            if (battle_stat >= 0) return battle_stat;
+            else return 0;
+
+        case 'D':
+            battle_stat = supemon->base_defense + supemon->defense;
+            if (battle_stat >= 0) return battle_stat;
+            else return 0;
+
+        case 'P':
+            battle_stat = supemon->base_accuracy + supemon->accuracy;
+            if (battle_stat >= 0) return battle_stat;
+            else return 0;
+
+        case 'E':
+            battle_stat = supemon->base_evasion + supemon->evasion;
+            if (battle_stat >= 0) return battle_stat;
+            else return 0;
+
+        default: return 0;
+    }
+}

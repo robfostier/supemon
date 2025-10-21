@@ -322,11 +322,11 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
         {
             if (move->damage > 0)
             {
-                float a_atk = (float)attacker->attack + attacker->base_attack;
-                float a_acc = (float)attacker->accuracy + attacker->base_accuracy;
+                float a_atk = (float)get_battle_stat(attacker, 'A');
+                float a_acc = (float)get_battle_stat(attacker, 'P');
                 
-                float t_def = (float)target->defense + target->base_defense;
-                float t_eva = (float)target->evasion + target->base_evasion;
+                float t_def = (float)get_battle_stat(target, 'D');
+                float t_eva = (float)get_battle_stat(target, 'E');
 
                 if (t_def <= .0f) t_def = 1.0f; // Avoid div by 0 if target's def was reduced
 
