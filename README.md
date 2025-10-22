@@ -242,3 +242,105 @@ These macros are defined in `global.h` and used throughout the code to maintain 
 ```
 
 This macro is defined in `battle.c` to ensure that the Player doesn't use more than 4 Items in a single battle.
+
+---
+### Program overview
+
+#### Entry point
+
+```c
+int main(void)
+{
+    Player player = start_game();
+
+    while(1)
+    {
+        if (chose_action(&player) == 0) break;
+    }
+}
+```
+
+`main()` is defined in main\.c. It acts as the entry point to our program. A Player object is created with `start_game()`, and the program then loops over `chose_action()` until the user asks to exit the game.
+
+#### Creating a Player
+
+```c
+Player start_game(void)
+{
+    Player player;
+
+    // Asks the user to chose between loading a save and starting a new game
+    
+    if (launch_choice == 2)
+    {
+        load_game(&player);
+        return player;
+    }
+    
+    // Asks the user to chose a name and a starter Supemon
+
+    init_player(&player, name, starter);
+    return player;
+}
+```
+
+The role of `start_game()` is to create a Player object, either through loading saved data or creating a new game.
+When creating a new game, a Player is initialized using `init_player()`.
+
+A Player is composed of Supemons, themselves composed of Moves pointers, and Items pointers.
+Those four structures and all functional logic associated with them are located into specific files : player\.c, supemon\.c, moves\.c and items\.c, and their respective header files.
+The game only needs a properly initialized Player object and the defined constants to run.
+
+#### Game loop
+
+```c
+int chose_action(Player* player)
+{
+    // Asks for 1 of 4 actions : start a random encounter, go to the Supemon Center, go to the Shop, or exit the game
+
+    switch (action_choice)
+    {
+        case 1:
+            go_to_battle(player);
+            return 1;
+        case 2:
+            go_to_shop(player);
+            return 1;
+        case 3:
+            go_to_center(player);
+            return 1;
+        case 4:
+        {
+            // Asks if the user wants to save and quit, quit without saving or keep playing
+
+            if (save_choice == 1)
+            {
+                save_game(player);
+                return 0;
+            }
+            else if (save_choice == 2) return 0;
+            else return 1;
+        }
+    }
+}
+```
+
+This functions asks as the main loop for our game. `main()` will keep calling it until it returns 0, at which point the user has asked to exit the game.
+Three main areas are implemented for the Player to explore :
+- `go_to_battle()` will start an encounter against a randomly selected Supemon.
+- `go_to_shop()` will send the Player to the Supemart, where they can buy and sell items.
+- `go_to_center()` will send the Player to the Supemon Center, where they can take a look at their Supemons and heal them and/or decide to switch their active Supemon.
+
+Each of those areas functionalities are defined in functions located in area-specific files : battle\.c, shop\.c and center\.c, and their respective header files.
+
+#### I/O utilities
+
+```c
+void npc_dialog(char *message, int time_in_ms); // Prints a line of dialog, char by char
+void clear_terminal(void);                      // Clears the terminal for a clean look at the game
+int get_input_counted(int min, int max);        // Asks the player for an integer, and ensures the validity of that input
+```
+
+I/O management is done using functions located in utils\.c. These functions help us maintain graphical coherence and ensure input safety. They are used throughout the code.
+
+#### Saving / Loading

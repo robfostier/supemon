@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/stat.h>
-#include "main.h"
 #include "global.h"
 #include "utils.h"
 #include "battle.h"
@@ -146,6 +145,10 @@ Player start_game(void)
     return player;
 }
 
+/**
+ * Chose an action.
+ * Returns 0 if player leaves the game, 1 otherwise.
+ */
 int chose_action(Player* player)
 {
     printf("+------------------------------+\n");
@@ -170,24 +173,24 @@ int chose_action(Player* player)
             go_to_center(player);
             return 1;
         case 4:
+        {
+            printf("+------------------------------+\n");
+            printf("| Do you want to save ?        |\n");
+            printf("|   1. Save and quit           |\n");
+            printf("|   2. Quit without saving     |\n");
+            printf("|   3. Cancel                  |\n");
+            printf("+------------------------------+\n");
+
+            int save_choice = get_input_counted(1, 3);
+
+            if (save_choice == 1)
             {
-                printf("+------------------------------+\n");
-                printf("| Do you want to save ?        |\n");
-                printf("|   1. Save and quit           |\n");
-                printf("|   2. Quit without saving     |\n");
-                printf("|   3. Cancel                  |\n");
-                printf("+------------------------------+\n");
-
-                int save_choice = get_input_counted(1, 3);
-
-                if (save_choice == 1)
-                {
-                    save_game(player);
-                    return 0;
-                }
-                else if (save_choice == 2) return 0;
-                else return 1; // Continue playing
+                save_game(player);
+                return 0;
             }
+            else if (save_choice == 2) return 0;
+            else return 1; // Continue playing
+        }
         default: break;
     }
 
