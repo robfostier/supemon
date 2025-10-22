@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "global.h"
+#include "utils.h"
 #include "player.h"
 #include "supemon.h"
 #include "items.h"
+#include "colors.h"
 
 void init_player(Player* player, const char* name, Supemon starter)
 {
@@ -58,7 +60,7 @@ int display_supemons(Player* player)
         Supemon* current = &player->supemons[i];
         if (current->level == 0) break; // Found an empty slot
 
-        printf("%d - %s\n", i + 1, current->name);
+        printf("%d - %s%s%s\n", i + 1, type_to_color(current->type), current->name, RESET);
         display_supemon(current, player->name);
     }
     return i;
@@ -186,8 +188,8 @@ int save_game(Player* player)
     for (int i = 0; i < supemon_count; i++)
     {
         Supemon* s = &player->supemons[i];
-        fprintf(file, "%s %u %u %d %d %d %d %d %d %d ",
-                s->name, s->level, s->experience, s->health, s->max_health,
+        fprintf(file, "%s %s %u %u %d %d %d %d %d %d %d ",
+                s->name, s->type, s->level, s->experience, s->health, s->max_health,
                 s->base_attack, s->base_defense, s->base_evasion, s->base_accuracy, s->speed);
 
         // Moves (sauvegarder les noms)
@@ -266,6 +268,8 @@ int load_game(Player* player)
     {
         Supemon* s = &player->supemons[i];
 
+        char type_buffer[16];
+
         unsigned int level;
         unsigned int experience; 
         int health;
@@ -276,14 +280,16 @@ int load_game(Player* player)
         int base_accuracy;
         int speed;
 
-        if (fscanf(file, "%12s %u %u %d %d %d %d %d %d %d ",
-                    s->name, &level, &experience, &health, &max_health,
-                    &base_attack, &base_defense, &base_evasion, &base_accuracy, &speed) != 10)
+        if (fscanf(file, "%12s %15s %u %u %d %d %d %d %d %d %d ",
+                    s->name, type_buffer, &level, &experience, &health, &max_health,
+                    &base_attack, &base_defense, &base_evasion, &base_accuracy, &speed) != 11)
         {
             fclose(file);
             return 0;
         }
     
+        s->type = strdup(type_buffer);
+
         // Set statistics
         if (level <= 0) level = 1;
         s->level = level;

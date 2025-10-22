@@ -5,6 +5,7 @@
 
 typedef struct {
     char name[MAX_NAME_LENGTH];
+    char *type;
     unsigned int level;
     unsigned int experience;
     int health;

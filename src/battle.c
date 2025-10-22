@@ -5,6 +5,7 @@
 #include "battle.h"
 #include "global.h"
 #include "utils.h"
+#include "colors.h"
 #include "player.h"
 #include "supemon.h"
 #include "moves.h"
@@ -15,7 +16,7 @@ int go_to_battle(Player* player)
     Supemon* active = get_active_supemon(player);
     if (active->health <= 0)
     {
-        printf("Your active Supemon cannot fight in this condition. Please visit the Supemon Center.\n");
+        print_colored(COLOR_ERROR, "Your active Supemon cannot fight in this condition. Please visit the Supemon Center.\n");
         npc_dialog("...", 1000);
         printf("\n");
         return 0;
@@ -33,18 +34,18 @@ int go_to_battle(Player* player)
     if (active->speed > foe.speed)
     {
         player_first = 1;
-        printf("Your %s is faster and will attack first!\n\n", active->name);
+        printf("Your %s%s%s is faster and will attack first!\n\n", type_to_color(active->type), active->name, RESET);
     }
     else if (active->speed < foe.speed)
     {
         player_first = 0;
-        printf("Enemy %s is faster and will attack first!\n\n", foe.name);
+        printf("Enemy %s%s%s is faster and will attack first!\n\n", type_to_color(foe.type), foe.name, RESET);
     }
     else // Equal speed, random
     {
         player_first = (rand() % 2);
-        if (player_first) printf("Your %s will attack first!\n\n", active->name);
-        else printf("Enemy %s will attack first!\n\n", foe.name);
+        if (player_first) printf("Your %s%s%s will attack first!\n\n", type_to_color(active->type), active->name, RESET);
+        else printf("Enemy %s%s%s will attack first!\n\n", type_to_color(foe.type), foe.name, RESET);
     }
 
     int used_item_count = 0;
@@ -121,8 +122,11 @@ void battle_rewards(Player* player, Supemon* foe)
     player->coins += gained_coins;
     gain_experience(active, gained_xp);
 
-    printf("%s gained %d experience points.\n", active->name, gained_xp);
-    npc_dialog("\n....", 1000);
+    printf("%s%s%s gained ", type_to_color(active->type), active->name, RESET);
+    printf("%s+%d XP%s", COLOR_XP, gained_xp, RESET);
+    printf(" and ");
+    printf("%s+%d coins%s!\n", COLOR_MONEY, gained_coins, RESET);
+    npc_dialog("...", 1000);
 }
 
 int player_turn(Player* player, Supemon* foe, int used_item_count)
@@ -170,7 +174,8 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             if (foe->health > 0) return 0; // Battle can continue
 
             clear_terminal();
-            printf("%s fainted. %s won the fight !\n", foe->name, active->name);
+            printf("%s%s%s fainted. ", type_to_color(foe->type), foe->name, RESET);
+            printf("%s%s%s won the fight!\n", type_to_color(active->type), active->name, RESET);
             battle_rewards(player, foe);
             return 1; // Battle needs to stop if foe fainted
         }
@@ -204,7 +209,7 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             }
             else
             {
-                printf("Can't use item !\n");
+                print_colored(COLOR_ERROR, "Can't use item !\n");
                 break; // Player can't use item, abort turn
             }
         }
@@ -223,12 +228,12 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
                 
                 clear_terminal();
 
-                printf("Successfully captured %s !\n", foe->name);
+                printf("%sSuccessfully captured%s %s%s%s!\n", COLOR_SUCCESS, RESET, type_to_color(foe->type), foe->name, RESET);
                 battle_rewards(player, foe);
                 return 1; // Foe captured, battle needs to end
             }
             else{
-                printf("Capture failed... (%.2f/%.2f)\n\n", rate, rnd);
+                printf("%sCapture failed...%s (%.2f/%.2f)\n\n", COLOR_ERROR, RESET, rate, rnd);
                 return 0; // Battle can continue
             }
         }
@@ -240,13 +245,13 @@ int player_turn(Player* player, Supemon* foe, int used_item_count)
             if (rnd <= rate)
             {
                 clear_terminal();
-                printf("You ran away !\n\n");
+                print_colored(COLOR_SUCCESS, "You ran away !\n\n");
                 npc_dialog("...", 1000);
                 return 1; // Ran away, battle needs to end
             }
             else
             {
-                printf("You failed to run away from the battle... (%.2f/%.2f)\n\n", rate, rnd);
+                printf("%sYou failed to run away from the battle...%s (%.2f/%.2f)\n\n", COLOR_ERROR, RESET, rate, rnd);
                 return 0; // Battle can continue
             }
         }
@@ -279,7 +284,8 @@ int foe_turn(Player* player, Supemon* foe)
 
     if (active->health > 0) return 0; // Battle can continue
     clear_terminal();
-    printf("%s fainted. %s won the fight !\n", active->name, foe->name);
+    printf("%s%s%s fainted. ", type_to_color(active->type), active->name, RESET);
+    printf("%s%s%s won the fight!\n", type_to_color(foe->type), foe->name, RESET);
     npc_dialog("...", 1000);
     return 1; // Battle needs to stop if player's active supemon has fainted
 }
@@ -313,12 +319,17 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
 
                 //printf("%f a_acc / (%f a_acc + %f t_acc) + 0,1 = %f\n", a_acc, a_acc, t_eva, success_rate);
 
-                if ((float)rand() / RAND_MAX <= success_rate)
+                 if ((float)rand() / RAND_MAX <= success_rate)
                 {
                     update_health(target, -(int)dmg);
-                    printf("%s used %s. %s takes %d damage.\n", attacker->name, move->name, target->name, (int)dmg);
+                    printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                    printf("%s takes ", target->name);
+                    printf("%s-%d HP%s.\n", COLOR_DAMAGE, (int)dmg, RESET);
                 }
-                else printf("%s dodged %s's attack.\n", target->name, attacker->name);
+                else {
+                    printf("%s dodged ", target->name);
+                    printf("%s's attack!\n", attacker->name);
+                }
             }
             break;
         }
@@ -327,12 +338,14 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
             if (move->damage > 0)
             {
                 attacker->attack += move->damage;
-                printf("%s used %s. %s's attack was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sAttack +%d%s!\n", attacker->name, COLOR_STAT_UP, move->damage, RESET);
             }
             else
             {
                 target->attack += move->damage;
-                printf("%s used %s. %s's attack was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sAttack -%d%s!\n", target->name, COLOR_STAT_DOWN, -move->damage, RESET);
             }
             break;
         }
@@ -341,12 +354,14 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
             if (move->damage > 0)
             {
                 attacker->defense += move->damage;
-                printf("%s used %s. %s's defense was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sDefense +%d%s!\n", attacker->name, COLOR_STAT_UP, move->damage, RESET);
             }
             else
             {
                 target->defense += move->damage;
-                printf("%s used %s. %s's defense was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sDefense -%d%s!\n", target->name, COLOR_STAT_DOWN, -move->damage, RESET);
             }
             break;
         }
@@ -355,12 +370,14 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
             if (move->damage > 0)
             {
                 attacker->accuracy += move->damage;
-                printf("%s used %s. %s's accuracy was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sAccuracy +%d%s!\n", attacker->name, COLOR_STAT_UP, move->damage, RESET);
             }
             else
             {
                 target->accuracy += move->damage;
-                printf("%s used %s. %s's accuracy was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sAccuracy -%d%s!\n", target->name, COLOR_STAT_DOWN, -move->damage, RESET);
             }
             break;
         }
@@ -369,12 +386,14 @@ void apply_move(const Move* move, Supemon* attacker, Supemon* target)
             if (move->damage > 0)
             {
                 attacker->evasion += move->damage;
-                printf("%s used %s. %s's evasion was increased by %d.\n", attacker->name, move->name, attacker->name, move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sEvasion +%d%s!\n", attacker->name, COLOR_STAT_UP, move->damage, RESET);
             }
             else
             {
                 target->evasion += move->damage;
-                printf("%s used %s. %s's evasion was reduced by %d.\n", attacker->name, move->name, target->name, - move->damage);
+                printf("%s used %s%s%s. ", attacker->name, BOLD, move->name, RESET);
+                printf("%s's %sEvasion -%d%s!\n", target->name, COLOR_STAT_DOWN, -move->damage, RESET);
             }
             break;
         }

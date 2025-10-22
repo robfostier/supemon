@@ -3,6 +3,7 @@
 
 #include "shop.h"
 #include "utils.h"
+#include "colors.h"
 
 void go_to_shop(Player* player)
 {
@@ -10,8 +11,10 @@ void go_to_shop(Player* player)
 
     const Item* catalog[] = {&POTION, &SUPER_POTION, &RARE_CANDY};
     int catalog_count = sizeof(catalog) / sizeof(catalog[0]);
-    
+
+    printf("%s", COLOR_NPC);
     npc_dialog("\"Welcome to the Supemart ! All your item needs fulfilled !\" says vendor Na.\n", 20);
+    printf("%s", RESET);
 
     while (1) // Stay in shop so long as player doesn't Leave
     {
@@ -22,7 +25,7 @@ void go_to_shop(Player* player)
         printf("|   1. See what's in store     |\n");
         printf("|   2. Sell your items         |\n");
         printf("|   3. Leave the Mart          |\n");
-        printf("+----------------[%4d Supcoins]\n", player->coins);
+        printf("+----------------%s[%4d Supcoins]%s\n", COLOR_MONEY, player->coins, RESET);
 
         int choice = get_input_counted(1, 3);
 
@@ -33,7 +36,9 @@ void go_to_shop(Player* player)
                 // Avoid buying more than can carry
                 if (item_count >= MAX_ITEMS)
                 {
+                    printf("%s", COLOR_NPC);
                     npc_dialog("\"Your pockets are already full ! Come back later !\" says vendor Na.\n", 20);
+                    printf("%s", RESET);
                     break;
                 }
 
@@ -54,7 +59,7 @@ void go_to_shop(Player* player)
                     printf("|%s|\n", formatted_line);
                 }
                 printf("|%3d. Cancel                   |\n", catalog_count + 1);
-                printf("+----------------[%4d Supcoins]\n", player->coins);
+                printf("+----------------%s[%4d Supcoins]%s\n", COLOR_MONEY, player->coins, RESET);
 
                 int buy_option = get_input_counted(1, catalog_count + 1);
 
@@ -65,10 +70,16 @@ void go_to_shop(Player* player)
                     if (add_item(player, catalog[buy_option - 1]) == 0) return; // Something went wrong, leave shop
                     player->coins -= catalog[buy_option - 1]->price; // Buy
 
-                    printf("You bought 1 %s for %d Supcoins.", catalog[buy_option - 1]->name, catalog[buy_option - 1]->price);
+                    printf("%sYou bought 1 %s for %s%d Supcoins%s.%s\n", COLOR_SUCCESS, catalog[buy_option - 1]->name, COLOR_MONEY, catalog[buy_option - 1]->price, RESET, RESET);
 
                     break;
-                } else npc_dialog("\"You don't have enough Supcoins for this. Come back when you have more !\" says vendor Na.\n", 20); break; // Player doesn't have enough coins
+                } 
+                else
+                {
+                    printf("%s", COLOR_NPC);
+                    npc_dialog("\"You don't have enough Supcoins for this. Come back when you have more !\" says vendor Na.\n", 20);
+                    printf("%s", RESET);
+                }
 
                 return; // Something went wrong, leave shop
             }
@@ -76,7 +87,9 @@ void go_to_shop(Player* player)
             {
                 if (item_count == 0)
                 {
+                    printf("%s", COLOR_NPC);
                     npc_dialog("\"You don't have any item to sell ! Come back later !\" says vendor Na.\n", 20);
+                    printf("%s", RESET);
                     break;
                 }
 
@@ -97,13 +110,16 @@ void go_to_shop(Player* player)
                     printf("|%s|\n", formatted_line);
                 }
                 printf("|%3d. Cancel                   |\n", item_count + 1);
-                printf("+----------------[%4d Supcoins]\n", player->coins);
+                printf("+----------------%s[%4d Supcoins]%s\n", COLOR_MONEY, player->coins, RESET);
 
                 int sell_option = get_input_counted(1, item_count + 1);
 
                 if (sell_option == item_count + 1) break; // Player choose to cancel
 
-                player->coins += player->items[sell_option - 1]->price / 2; // Sell
+                // Sell
+                int sell_price = player->items[sell_option - 1]->price / 2;
+                printf("%sYou sold 1 %s for %s+%d Supcoins%s.%s\n", COLOR_SUCCESS, player->items[sell_option - 1]->name, COLOR_MONEY, sell_price, RESET, RESET);
+                player->coins += sell_price;
                 remove_item(player, sell_option - 1);
 
                 break;

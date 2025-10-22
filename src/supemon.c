@@ -3,11 +3,14 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "utils.h"
+#include "colors.h"
 #include "supemon.h"
 #include "moves.h"
 
 const Supemon SUPMANDER = {
     .name = "Supmander",
+    .type = FIRE,
     .level = 1,
     .experience = 0,
     .health = 10,
@@ -26,6 +29,7 @@ const Supemon SUPMANDER = {
 
 const Supemon SUPASAUR = {
     .name = "Supasaur",
+    .type = GRASS,
     .level = 1,
     .experience = 0,
     .health = 9,
@@ -44,6 +48,7 @@ const Supemon SUPASAUR = {
 
 const Supemon SUPIRTLE = {
     .name = "Supirtle",
+    .type = WATER,
     .level = 1,
     .experience = 0,
     .health = 11,
@@ -151,19 +156,24 @@ void display_supemon(Supemon* supemon, char player_name[])
     // HP
     int hp_len = 5 + snprintf(NULL, 0, "%d", supemon->health) + snprintf(NULL, 0, "%d", supemon->max_health); // " [" + "/" + "] "
     int hp_spaces = BOX_WIDTH - hp_len;
-
     if (hp_spaces < 0) hp_spaces = 0;
+
+    float hp_percent = (float)supemon->health / (float)supemon->max_health;
+    const char* hp_color;
+    if (hp_percent > 0.5) hp_color = COLOR_HP;
+    else if (hp_percent > 0.2) hp_color = COLOR_HP_LOW;
+    else hp_color = COLOR_HP_CRITICAL;
 
     printf("+");
     for (int i = 0; i < hp_spaces; i++) printf("-");
-    printf("-[%d/%d]-+\n", supemon->health, supemon->max_health);
+    printf("-%s[%d/%d]%s-+\n", hp_color, supemon->health, supemon->max_health, RESET);
 
     // NAME
     int name_len = strlen(supemon->name) + strlen(player_name) + 4; // " Supemon (player)"
     int name_spaces = BOX_WIDTH - name_len;
 
     if (name_spaces < 0) name_spaces = 0;
-    printf("| %s (%s)%*s|\n", supemon->name, player_name, name_spaces, "");
+    printf("| %s%s%s (%s)%*s|\n", type_to_color(supemon->type), supemon->name, RESET, player_name, name_spaces, "");
     
     // LVL + XP BAR
     int lvl_len = 10 + snprintf(NULL, 0, "%d", supemon->level); // " [" + progress bar + "] Lvl. {lvl} "
@@ -176,23 +186,24 @@ void display_supemon(Supemon* supemon, char player_name[])
     if (xp_ratio < 0.0f) xp_ratio = 0.0f;
     int progress = (int)(xp_ratio * xp_bar_len);
 
-    char xp_bar[BOX_WIDTH - 10]; // maximum size
-
+    printf("| Lvl. %s%d%s %s[", BOLD, supemon->level, RESET, COLOR_XP);
     for (int i = 0; i < xp_bar_len; i++)
     {
-        if (i < progress) xp_bar[i] = '#';
-        else xp_bar[i] = '-';
+        if (i < progress) printf("#");
+        else printf("-");
     }
-
-    xp_bar[xp_bar_len] = '\0';
-
-    printf("| Lvl. %d [%s] |\n", supemon->level, xp_bar);
+    printf("]%s |\n", RESET);
     
     printf("+------------------------------+\n");
 
     // STATS BOX
-    printf("| Atk: %-3d            Def: %-3d |\n", get_battle_stat(supemon, 'A'), get_battle_stat(supemon, 'D'));
-    printf("| Acc: %-3d            Eva: %-3d |\n", get_battle_stat(supemon, 'P'), get_battle_stat(supemon, 'E'));
+    const char* atk_color = (supemon->attack > 0) ? COLOR_STAT_UP : (supemon->attack < 0) ? COLOR_STAT_DOWN : "";
+    const char* def_color = (supemon->defense > 0) ? COLOR_STAT_UP : (supemon->defense < 0) ? COLOR_STAT_DOWN : "";
+    const char* acc_color = (supemon->accuracy > 0) ? COLOR_STAT_UP : (supemon->accuracy < 0) ? COLOR_STAT_DOWN : "";
+    const char* eva_color = (supemon->evasion > 0) ? COLOR_STAT_UP : (supemon->evasion < 0) ? COLOR_STAT_DOWN : "";
+
+    printf("| Atk: %s%-3d%s            Def: %s%-3d%s |\n", atk_color, get_battle_stat(supemon, 'A'), RESET, def_color, get_battle_stat(supemon, 'D'), RESET);
+    printf("| Acc: %s%-3d%s            Eva: %s%-3d%s |\n", acc_color, get_battle_stat(supemon, 'P'), RESET, eva_color, get_battle_stat(supemon, 'E'), RESET);
     printf("+------------------------------+\n\n");
 }
 

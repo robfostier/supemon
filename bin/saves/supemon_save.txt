@@ -2,8 +2,8 @@ Godmode
 9999
 0
 3
-Supmander 1 179 50 50 50 50 50 50 50 Scratch Growl Foliage Shell 
-Supasaur 1 300 9 9 1 1 3 2 2 Pound Foliage NONE NONE 
-Supirtle 1 450 11 11 1 2 2 1 2 Pound Shell NONE NONE 
+Supmander RED 1 179 50 50 50 50 50 50 50 Scratch Growl Foliage Shell 
+Supasaur GREEN 1 300 9 9 1 1 3 2 2 Pound Foliage NONE NONE 
+Supirtle CYAN 1 450 11 11 1 2 2 1 2 Pound Shell NONE NONE 
 10
 1 3 2 2 1 3 3 3 3 3 

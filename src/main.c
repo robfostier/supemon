@@ -1,19 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include <sys/stat.h>
 #include "global.h"
 #include "utils.h"
+#include "colors.h"
 #include "battle.h"
 #include "shop.h"
 #include "center.h"
 #include "player.h"
 #include "supemon.h"
-  
+
+Player start_game(void);
+int chose_action(Player* player);
+
 int main(void)
 {
     // SET SEED
     srand(time(NULL));
+    enable_colors();
+
     clear_terminal();
 
     // Create saves directory if it doesn't exist
@@ -52,17 +59,19 @@ Player start_game(void)
     {
         if (load_game(&player) == 1)
         {
-            printf("Game loaded successfully!\n");
+            print_colored(COLOR_SUCCESS, "Game loaded successfully!\n");
+            printf("%s", COLOR_NPC);
             npc_dialog("Welcome back, ", 20);
             npc_dialog(player.name, 20);
             npc_dialog("!\n\n", 20);
+            printf("%s", RESET);
             npc_dialog("...", 500);
             printf("\n");
             return player;
         }
         else
         {
-            printf("No save file found or error loading. Starting new game...\n\n");
+            print_colored(COLOR_WARNING, "No save file found or error loading. Starting new game...\n\n");
             npc_dialog("...", 500);
             // Continue vers New Game
         }
@@ -70,15 +79,17 @@ Player start_game(void)
 
     // NEW GAME
     clear_terminal();
-    
+
     char name[MAX_NAME_LENGTH];
 
+    printf("%s", COLOR_NPC);
     npc_dialog("\"...", 500);
     npc_dialog(" Hello", 30);
     npc_dialog("...", 500);
     npc_dialog(" Erm", 30);
     npc_dialog("...", 500);
     npc_dialog(" What's your name again ?\" asks an old man.\n", 30);
+    printf("%s", RESET);
 
     npc_dialog("\nYOUR NAME: ", 10);
 
@@ -97,6 +108,7 @@ Player start_game(void)
 
     printf("\n");
 
+    printf("%s", COLOR_NPC);
     npc_dialog("\"Oh yes, I remember now. You are ", 30);
     npc_dialog(name, 30);
     npc_dialog("...", 500);
@@ -105,14 +117,15 @@ Player start_game(void)
     npc_dialog("\nAh yes ! I'm professor Ionis", 20);
     npc_dialog("...", 500);
     npc_dialog(" Here, I have a gift for you.\nTake one of my Supeballs ! Each contains a Supemon. Choose well !\" says the very old man.\n", 20);
+    printf("%s", RESET);
 
     npc_dialog("\nYou are presented with a strange box.\nIt appears to contain 3 strange balls.\n\n", 10);
 
     printf("+------------------------------+\n");
     printf("| Choose your starter Supemon: |\n");
-    printf("|   1. Supmander               |\n");
-    printf("|   2. Supasaur                |\n");
-    printf("|   3. Supirtle                |\n");
+    printf("|   1. %sSupmander%s               |\n", RED, RESET);
+    printf("|   2. %sSupasaur%s                |\n", GREEN, RESET);
+    printf("|   3. %sSupirtle%s                |\n", CYAN, RESET);
     printf("+------------------------------+\n");
 
     int starter_choice = get_input_counted(1, 3);
@@ -134,21 +147,25 @@ Player start_game(void)
 
     init_player(&player, name, starter);
 
-    npc_dialog("\n\"You chose ", 20);
+    printf("%s", COLOR_NPC);
+    npc_dialog("\"You chose ", 20);
+    printf("%s", type_to_color(starter.type));
     npc_dialog(starter.name, 20);
+    printf("%s", COLOR_NPC);
     npc_dialog(" ! A wise choice. Right on time for my hourly nap. See you soon, ", 20);
     npc_dialog(player.name, 20);
     npc_dialog(" !\" says professor Ionis as he urges you to leave his home.\n\n", 20);
+    printf("%s", RESET);
 
+    printf("%s", COLOR_SUCCESS);
     npc_dialog("You step outside the house, ready to start your adventure!\n\n", 20);
+    printf("%s", RESET);
+    
+    npc_dialog("...", 500);
 
     return player;
 }
 
-/**
- * Chose an action.
- * Returns 0 if player leaves the game, 1 otherwise.
- */
 int chose_action(Player* player)
 {
     printf("+------------------------------+\n");
@@ -173,24 +190,24 @@ int chose_action(Player* player)
             go_to_center(player);
             return 1;
         case 4:
-        {
-            printf("+------------------------------+\n");
-            printf("| Do you want to save ?        |\n");
-            printf("|   1. Save and quit           |\n");
-            printf("|   2. Quit without saving     |\n");
-            printf("|   3. Cancel                  |\n");
-            printf("+------------------------------+\n");
-
-            int save_choice = get_input_counted(1, 3);
-
-            if (save_choice == 1)
             {
-                save_game(player);
-                return 0;
+                printf("+------------------------------+\n");
+                printf("| Do you want to save ?        |\n");
+                printf("|   1. Save and quit           |\n");
+                printf("|   2. Quit without saving     |\n");
+                printf("|   3. Cancel                  |\n");
+                printf("+------------------------------+\n");
+
+                int save_choice = get_input_counted(1, 3);
+
+                if (save_choice == 1)
+                {
+                    save_game(player);
+                    return 0;
+                }
+                else if (save_choice == 2) return 0;
+                else return 1; // Continue playing
             }
-            else if (save_choice == 2) return 0;
-            else return 1; // Continue playing
-        }
         default: break;
     }
 

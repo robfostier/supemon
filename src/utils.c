@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -8,6 +9,23 @@
 #endif
 
 #include "utils.h"
+#include "colors.h"
+
+void enable_colors(void)
+{
+    #ifdef _WIN32
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hOut != INVALID_HANDLE_VALUE)
+        {
+            DWORD dwMode = 0;
+            if (GetConsoleMode(hOut, &dwMode))
+            {
+                dwMode |= 0x0004; // ENABLE_VIRTUAL_TERMINAL_PROCESSING
+                SetConsoleMode(hOut, dwMode);
+            }
+        }
+    #endif
+}
 
 void npc_dialog(char *message, int time_in_ms)
 {
@@ -16,6 +34,7 @@ void npc_dialog(char *message, int time_in_ms)
     while (message[char_count] != '\0')
     {
         printf("%c", message[char_count]);
+        fflush(stdout);  
 
         #ifdef _WIN32
             Sleep(time_in_ms);              // Windows -> millisecondes
@@ -80,4 +99,14 @@ int get_input_counted(int min, int max)
     printf("\n");
 
     return input;
+}
+
+void print_colored(const char* color, const char* text) { printf("%s%s%s", color, text, RESET); }
+
+const char* type_to_color(const char* type)
+{
+    if (strcmp(type, "RED") == 0)   return "\033[31m";
+    if (strcmp(type, "GREEN") == 0) return "\033[32m";
+    if (strcmp(type, "CYAN") == 0)  return "\033[36m";
+    return "\033[0m";
 }
