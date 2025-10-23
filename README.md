@@ -1,6 +1,7 @@
 # Supémon - pCDEV1
 
 *Robinson Fostier, Mouhamadou Sy*
+github.com/robfostier/supemon.git
 
 ---
 ## User documentation
